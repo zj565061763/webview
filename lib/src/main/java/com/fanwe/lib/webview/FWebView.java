@@ -3,7 +3,6 @@ package com.fanwe.lib.webview;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
@@ -18,10 +17,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import com.fanwe.lib.utils.context.FDeviceUtil;
-import com.fanwe.lib.utils.context.FPackageUtil;
-import com.fanwe.lib.utils.context.FResUtil;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,15 +25,6 @@ import java.util.Map;
 
 public class FWebView extends WebView
 {
-    public static final int REQUEST_GET_CONTENT = 100;
-    private static final String WEBVIEW_CACHE_DIR = "/webviewcache"; // web缓存目录
-
-    private ValueCallback<Uri> mContentValueCallback;
-    private List<String> mListActionViewUrl = new ArrayList<>();
-    private List<String> mListBrowsableUrl = new ArrayList<String>();
-    private File mCacheDir;
-    private ProgressBar mProgressBar;
-
     public FWebView(Context context)
     {
         super(context);
@@ -51,129 +37,24 @@ public class FWebView extends WebView
         init();
     }
 
-    public void setProgressBar(ProgressBar progressBar)
-    {
-        this.mProgressBar = progressBar;
-    }
+    public static final int REQUEST_GET_CONTENT = 100;
+    private static final String WEBVIEW_CACHE_DIR = "/webviewcache"; // web缓存目录
 
-    public void addActionViewUrl(String url)
-    {
-        if (url == null)
-        {
-            return;
-        }
-        if (!mListActionViewUrl.contains(url))
-        {
-            mListActionViewUrl.add(url);
-        }
-    }
-
-    private void initActionViewUrl()
-    {
-        addActionViewUrl("tel:");
-        addActionViewUrl("weixin:");
-        addActionViewUrl("appay:");
-        addActionViewUrl("sinaweibo:");
-        addActionViewUrl("alipayqr");
-        addActionViewUrl("alipays");
-        addActionViewUrl("mqqapi://");
-    }
-
-    public void addBrowsableUrl(String url)
-    {
-        if (url == null)
-        {
-            return;
-        }
-        if (!mListBrowsableUrl.contains(url))
-        {
-            mListBrowsableUrl.add(url);
-        }
-    }
-
-    private void initBrowsableUrl()
-    {
-        addBrowsableUrl("intent://platformapi/startapp");
-        addBrowsableUrl("intent://dl/business");
-    }
-
-    public boolean interceptActionViewUrl(String url)
-    {
-        boolean result = false;
-        if (url != null)
-        {
-            for (String item : mListActionViewUrl)
-            {
-                if (url.startsWith(item))
-                {
-                    startActionView(url);
-                    result = true;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
-    public boolean interceptBrowsableUrl(String url)
-    {
-        boolean result = false;
-        if (url != null)
-        {
-            for (String item : mListBrowsableUrl)
-            {
-                if (url.startsWith(item))
-                {
-                    startBrowsable(url);
-                    result = true;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
-    protected void startActionView(String url)
-    {
-        try
-        {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
-            getContext().startActivity(intent);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    protected void startBrowsable(String url)
-    {
-        try
-        {
-            Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-            intent.addCategory("android.intent.category.BROWSABLE");
-            intent.setComponent(null);
-            getContext().startActivity(intent);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
+    private ValueCallback<Uri> mContentValueCallback;
+    private List<String> mListActionViewUrl = new ArrayList<>();
+    private List<String> mListBrowsableUrl = new ArrayList<>();
+    private File mCacheDir;
+    private ProgressBar mProgressBar;
 
     protected void init()
     {
-        String cacheDirPath = getContext().getCacheDir().getAbsolutePath() + WEBVIEW_CACHE_DIR;
-        mCacheDir = new File(cacheDirPath);
-        if (!mCacheDir.exists())
-        {
-            mCacheDir.mkdirs();
-        }
+        FWebViewCookie.init(getContext());
 
         initActionViewUrl();
         initBrowsableUrl();
         initSettings(getSettings());
 
-        setWebViewClient(mViewClientWrapper);
+        setWebViewClient(mWebViewClientWrapper);
         setWebChromeClient(mWebChromeClientWrapper);
 
         setDownloadListener(new DownloadListener()
@@ -187,111 +68,25 @@ public class FWebView extends WebView
             }
         });
         requestFocus();
+
+        FWebViewManager.getInstance().notifyWebViewInit(this);
     }
 
-    public void setWebViewClientListener(WebViewClient listener)
+    private void initActionViewUrl()
     {
-        mViewClientWrapper.setWebViewClient(listener);
+        addActionViewUrl("tel:");
+        addActionViewUrl("weixin:");
+        addActionViewUrl("appay:");
+        addActionViewUrl("sinaweibo:");
+        addActionViewUrl("alipayqr");
+        addActionViewUrl("alipays");
+        addActionViewUrl("mqqapi://");
     }
 
-    public void setWebChromeClientListener(WebChromeClient listener)
+    private void initBrowsableUrl()
     {
-        mWebChromeClientWrapper.setWebChromeClient(listener);
-    }
-
-    /**
-     * WebViewClient
-     */
-    private WebViewClientWrapper mViewClientWrapper = new WebViewClientWrapper()
-    {
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url)
-        {
-            if (interceptActionViewUrl(url))
-            {
-                return true;
-            }
-
-            if (interceptBrowsableUrl(url))
-            {
-                return true;
-            }
-
-            view.loadUrl(url);
-
-            super.shouldOverrideUrlLoading(view, url);
-            return true;
-        }
-    };
-
-    /**
-     * WebChromeClient
-     */
-    private WebChromeClientWrapper mWebChromeClientWrapper = new WebChromeClientWrapper()
-    {
-        @Override
-        public void onProgressChanged(WebView view, int newProgress)
-        {
-            super.onProgressChanged(view, newProgress);
-            changeProgressBarIfNeed(newProgress);
-        }
-
-        @Override
-        public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String capture)
-        {
-            Context context = getContext();
-            if (context instanceof Activity)
-            {
-                Activity activity = (Activity) context;
-                mContentValueCallback = uploadFile;
-
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("*/*");
-                activity.startActivityForResult(intent, REQUEST_GET_CONTENT);
-            }
-            super.openFileChooser(uploadFile, acceptType, capture);
-        }
-    };
-
-    private void changeProgressBarIfNeed(int progress)
-    {
-        if (mProgressBar != null)
-        {
-            if (progress == 100)
-            {
-                mProgressBar.setVisibility(View.GONE);
-            } else
-            {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mProgressBar.setProgress(progress);
-            }
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (resultCode == Activity.RESULT_OK)
-        {
-            switch (requestCode)
-            {
-                case REQUEST_GET_CONTENT:
-                    if (data != null)
-                    {
-                        Uri value = data.getData();
-                        if (value != null)
-                        {
-                            mContentValueCallback.onReceiveValue(value);
-                            mContentValueCallback = null;
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
+        addBrowsableUrl("intent://platformapi/startapp");
+        addBrowsableUrl("intent://dl/business");
     }
 
     protected void initSettings(WebSettings settings)
@@ -299,37 +94,23 @@ public class FWebView extends WebView
         setScaleToShowAll(true);
         setSupportZoom(true);
         setDisplayZoomControls(false);
-        settings.setDefaultTextEncodingName("utf-8");
         settings.setJavaScriptEnabled(true);
-        settings.setAllowFileAccess(true);
-        settings.setDomStorageEnabled(true); // 开启DOM storage API 功能
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+        settings.setDomStorageEnabled(true);
         settings.setSavePassword(false);
 
+        //Geolocation
         settings.setGeolocationEnabled(true);
-        settings.setGeolocationDatabasePath(mCacheDir.getAbsolutePath());
+        settings.setGeolocationDatabasePath(getCacheDir().getAbsolutePath());
 
-        // Database
+        //Database
         settings.setDatabaseEnabled(true);
-        settings.setDatabasePath(mCacheDir.getAbsolutePath());
+        settings.setDatabasePath(getCacheDir().getAbsolutePath());
 
-        // AppCache
+        //AppCache
         settings.setAppCacheEnabled(true);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setAppCacheMaxSize(1024 * 1024 * 8);
-        settings.setAppCachePath(mCacheDir.getAbsolutePath());
-
-        PackageInfo packageInfo = FPackageUtil.getPackageInfo();
-
-        String us = settings.getUserAgentString();
-        us = us + " fanwe_app_sdk" +
-                " sdk_type/android" +
-                " sdk_version_name/" + packageInfo.versionName +
-                " sdk_version/" + packageInfo.versionCode +
-                " sdk_guid/" + FDeviceUtil.getDeviceId() +
-                " screen_width/" + FResUtil.getScreenWidth() +
-                " screen_height/" + FResUtil.getScreenHeight();
-        settings.setUserAgentString(us);
+        settings.setAppCachePath(getCacheDir().getAbsolutePath());
     }
 
     /**
@@ -365,6 +146,16 @@ public class FWebView extends WebView
     }
 
     /**
+     * 设置进度条ProgressBar
+     *
+     * @param progressBar
+     */
+    public void setProgressBar(ProgressBar progressBar)
+    {
+        mProgressBar = progressBar;
+    }
+
+    /**
      * 加载html内容
      *
      * @param htmlContent
@@ -395,6 +186,8 @@ public class FWebView extends WebView
             return;
         }
 
+        FWebViewManager.getInstance().synchronizeHttpCookieToWebView(url);
+
         url = buildGetUrl(url, params);
         if (headers != null && !headers.isEmpty())
         {
@@ -417,6 +210,8 @@ public class FWebView extends WebView
         {
             return;
         }
+
+        FWebViewManager.getInstance().synchronizeHttpCookieToWebView(url);
 
         byte[] postData = null;
         String postString = buildPostString(params);
@@ -461,6 +256,202 @@ public class FWebView extends WebView
         } else
         {
             loadUrl("javascript:" + js);
+        }
+    }
+
+    /**
+     * 返回webview缓存目录
+     *
+     * @return
+     */
+    public File getCacheDir()
+    {
+        if (mCacheDir == null)
+        {
+            mCacheDir = new File(getContext().getCacheDir(), WEBVIEW_CACHE_DIR);
+            if (!mCacheDir.exists())
+            {
+                mCacheDir.mkdirs();
+            }
+        }
+        return mCacheDir;
+    }
+
+    public void setWebViewClientListener(WebViewClient listener)
+    {
+        mWebViewClientWrapper.setWebViewClient(listener);
+    }
+
+    public void setWebChromeClientListener(WebChromeClient listener)
+    {
+        mWebChromeClientWrapper.setWebChromeClient(listener);
+    }
+
+    /**
+     * WebViewClient
+     */
+    private WebViewClientWrapper mWebViewClientWrapper = new WebViewClientWrapper()
+    {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url)
+        {
+            if (super.shouldOverrideUrlLoading(view, url))
+            {
+            } else
+            {
+                if (interceptActionViewUrl(url) || interceptBrowsableUrl(url))
+                {
+                    return true;
+                }
+                view.loadUrl(url);
+            }
+            return true;
+        }
+    };
+
+    /**
+     * WebChromeClient
+     */
+    private WebChromeClientWrapper mWebChromeClientWrapper = new WebChromeClientWrapper()
+    {
+        @Override
+        public void onProgressChanged(WebView view, int newProgress)
+        {
+            super.onProgressChanged(view, newProgress);
+            changeProgressBarIfNeed(newProgress);
+        }
+
+        @Override
+        public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String capture)
+        {
+            Context context = getContext();
+            if (context instanceof Activity)
+            {
+                Activity activity = (Activity) context;
+                mContentValueCallback = uploadFile;
+
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                activity.startActivityForResult(intent, REQUEST_GET_CONTENT);
+            }
+            super.openFileChooser(uploadFile, acceptType, capture);
+        }
+    };
+
+    public void addActionViewUrl(String url)
+    {
+        if (TextUtils.isEmpty(url))
+        {
+            return;
+        }
+        if (!mListActionViewUrl.contains(url))
+        {
+            mListActionViewUrl.add(url);
+        }
+    }
+
+    public void addBrowsableUrl(String url)
+    {
+        if (TextUtils.isEmpty(url))
+        {
+            return;
+        }
+        if (!mListBrowsableUrl.contains(url))
+        {
+            mListBrowsableUrl.add(url);
+        }
+    }
+
+    protected boolean interceptActionViewUrl(String url)
+    {
+        for (String item : mListActionViewUrl)
+        {
+            if (url.startsWith(item))
+            {
+                startActionView(url);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean interceptBrowsableUrl(String url)
+    {
+        for (String item : mListBrowsableUrl)
+        {
+            if (url.startsWith(item))
+            {
+                startBrowsable(url);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected void startActionView(String url)
+    {
+        try
+        {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            getContext().startActivity(intent);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    protected void startBrowsable(String url)
+    {
+        try
+        {
+            Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setComponent(null);
+            getContext().startActivity(intent);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void changeProgressBarIfNeed(int progress)
+    {
+        if (mProgressBar != null)
+        {
+            if (progress == 100)
+            {
+                mProgressBar.setVisibility(View.GONE);
+            } else
+            {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setProgress(progress);
+            }
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (resultCode == Activity.RESULT_OK)
+        {
+            switch (requestCode)
+            {
+                case REQUEST_GET_CONTENT:
+                    if (data != null)
+                    {
+                        Uri value = data.getData();
+                        if (value != null)
+                        {
+                            mContentValueCallback.onReceiveValue(value);
+                            mContentValueCallback = null;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 
