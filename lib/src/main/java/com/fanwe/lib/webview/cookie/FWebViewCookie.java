@@ -1,4 +1,4 @@
-package com.fanwe.lib.webview;
+package com.fanwe.lib.webview.cookie;
 
 import android.content.Context;
 import android.text.TextUtils;

@@ -2,6 +2,8 @@ package com.fanwe.lib.webview;
 
 import android.webkit.WebView;
 
+import com.fanwe.lib.webview.cookie.FWebViewCookie;
+
 import java.net.HttpCookie;
 import java.util.List;
 
