@@ -339,8 +339,8 @@ public class FWebView extends WebView
      */
     public final void setScaleToShowAll(boolean isScaleToShowAll)
     {
-        getSettings().setLoadWithOverviewMode(isScaleToShowAll);
         getSettings().setUseWideViewPort(isScaleToShowAll);
+        getSettings().setLoadWithOverviewMode(isScaleToShowAll);
     }
 
     /**
