@@ -56,9 +56,9 @@ public class FWebView extends WebView
                 getContext().startActivity(intent);
             }
         });
-        requestFocus();
 
         FWebViewManager.getInstance().notifyWebViewInit(this);
+        requestFocus();
     }
 
     protected void initSettings(WebSettings settings)
