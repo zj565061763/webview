@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">lib</string>
+
+    <string-array name="arr_action_view_url">
+        <item>tel:</item>
+        <item>weixin:</item>
+        <item>appay:</item>
+        <item>sinaweibo:</item>
+        <item>alipayqr</item>
+        <item>mqqapi://</item>
+    </string-array>
+
+    <string-array name="arr_browsable_url">
+        <item>intent://platformapi/startapp</item>
+        <item>intent://dl/business</item>
+    </string-array>
+
 </resources>

@@ -12,7 +12,7 @@ public class FWebViewManager
 {
     private static FWebViewManager sInstance;
 
-    private Callback mCallback;
+    private FWebViewHandler mWebViewHandler;
 
     private FWebViewManager()
     {
@@ -33,35 +33,23 @@ public class FWebViewManager
         return sInstance;
     }
 
-    public void setCallback(Callback callback)
+    public void setWebViewHandler(FWebViewHandler webViewHandler)
     {
-        mCallback = callback;
+        mWebViewHandler = webViewHandler;
     }
 
-    private Callback getCallback()
+    private FWebViewHandler getWebViewHandler()
     {
-        if (mCallback == null)
+        if (mWebViewHandler == null)
         {
-            mCallback = new Callback()
-            {
-                @Override
-                public void onInitWebView(WebView webView)
-                {
-                }
-
-                @Override
-                public List<HttpCookie> getHttpCookieForUrl(String url)
-                {
-                    return null;
-                }
-            };
+            mWebViewHandler = FWebViewHandler.DEFAULT;
         }
-        return mCallback;
+        return mWebViewHandler;
     }
 
     public void notifyWebViewInit(WebView webView)
     {
-        getCallback().onInitWebView(webView);
+        getWebViewHandler().onInitWebView(webView);
     }
 
     /**
@@ -71,25 +59,7 @@ public class FWebViewManager
      */
     public void synchronizeHttpCookieToWebView(String url)
     {
-        List<HttpCookie> listHttpCookie = getCallback().getHttpCookieForUrl(url);
+        List<HttpCookie> listHttpCookie = getWebViewHandler().getHttpCookieForUrl(url);
         FWebViewCookie.setCookie(url, listHttpCookie);
-    }
-
-    public interface Callback
-    {
-        /**
-         * 初始化webview
-         *
-         * @param webView
-         */
-        void onInitWebView(WebView webView);
-
-        /**
-         * 返回url对应的http的cookie
-         *
-         * @param url
-         * @return
-         */
-        List<HttpCookie> getHttpCookieForUrl(String url);
     }
 }

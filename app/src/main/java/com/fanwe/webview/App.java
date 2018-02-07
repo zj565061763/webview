@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 import android.webkit.WebView;
 
+import com.fanwe.lib.webview.FWebViewHandler;
 import com.fanwe.lib.webview.FWebViewManager;
 
 import java.net.HttpCookie;
@@ -21,7 +22,7 @@ public class App extends Application
     public void onCreate()
     {
         super.onCreate();
-        FWebViewManager.getInstance().setCallback(new FWebViewManager.Callback()
+        FWebViewManager.getInstance().setWebViewHandler(new FWebViewHandler()
         {
             @Override
             public void onInitWebView(WebView webView)
