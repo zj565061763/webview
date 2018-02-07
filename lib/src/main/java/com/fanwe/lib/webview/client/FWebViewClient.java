@@ -26,8 +26,8 @@ public class FWebViewClient extends WebViewClient
     {
         mContext = context;
 
-        String[] arrActionViewUrl = context.getResources().getStringArray(R.array.arr_action_view_url);
-        if (arrActionViewUrl != null && arrActionViewUrl.length > 0)
+        final String[] arrActionViewUrl = context.getResources().getStringArray(R.array.lib_webview_arr_action_view_url);
+        if (arrActionViewUrl != null)
         {
             for (String item : arrActionViewUrl)
             {
@@ -35,8 +35,8 @@ public class FWebViewClient extends WebViewClient
             }
         }
 
-        String[] arrBrowsableUrl = context.getResources().getStringArray(R.array.arr_browsable_url);
-        if (arrBrowsableUrl != null && arrBrowsableUrl.length > 0)
+        final String[] arrBrowsableUrl = context.getResources().getStringArray(R.array.lib_webview_arr_browsable_url);
+        if (arrBrowsableUrl != null)
         {
             for (String item : arrBrowsableUrl)
             {
