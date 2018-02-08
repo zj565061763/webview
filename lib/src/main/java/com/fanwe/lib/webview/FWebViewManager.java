@@ -61,7 +61,7 @@ public class FWebViewManager
      */
     public void synchronizeHttpCookieToWebView(String url)
     {
-        List<HttpCookie> listHttpCookie = getWebViewHandler().getHttpCookieForUrl(url);
+        List<HttpCookie> listHttpCookie = getWebViewHandler().getHttpCookieForWebViewUrl(url);
         FWebViewCookie.setCookie(url, listHttpCookie);
     }
 }

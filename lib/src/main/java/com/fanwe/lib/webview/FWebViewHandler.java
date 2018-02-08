@@ -18,7 +18,7 @@ public interface FWebViewHandler
         }
 
         @Override
-        public List<HttpCookie> getHttpCookieForUrl(String url)
+        public List<HttpCookie> getHttpCookieForWebViewUrl(String url)
         {
             return null;
         }
@@ -37,5 +37,5 @@ public interface FWebViewHandler
      * @param url
      * @return
      */
-    List<HttpCookie> getHttpCookieForUrl(String url);
+    List<HttpCookie> getHttpCookieForWebViewUrl(String url);
 }
