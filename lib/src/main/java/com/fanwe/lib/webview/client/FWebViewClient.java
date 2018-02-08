@@ -25,24 +25,8 @@ public class FWebViewClient extends WebViewClient
     public FWebViewClient(Context context)
     {
         mContext = context;
-
-        final String[] arrActionViewUrl = context.getResources().getStringArray(R.array.lib_webview_arr_action_view_url);
-        if (arrActionViewUrl != null)
-        {
-            for (String item : arrActionViewUrl)
-            {
-                addActionViewUrl(item);
-            }
-        }
-
-        final String[] arrBrowsableUrl = context.getResources().getStringArray(R.array.lib_webview_arr_browsable_url);
-        if (arrBrowsableUrl != null)
-        {
-            for (String item : arrBrowsableUrl)
-            {
-                addBrowsableUrl(item);
-            }
-        }
+        initActionViewUrl();
+        initBrowsableUrl();
     }
 
     //---------- Override start ----------
@@ -59,6 +43,30 @@ public class FWebViewClient extends WebViewClient
     }
 
     //---------- Override end ----------
+
+    private void initActionViewUrl()
+    {
+        final String[] arrActionViewUrl = getContext().getResources().getStringArray(R.array.lib_webview_arr_action_view_url);
+        if (arrActionViewUrl != null)
+        {
+            for (String item : arrActionViewUrl)
+            {
+                addActionViewUrl(item);
+            }
+        }
+    }
+
+    private void initBrowsableUrl()
+    {
+        final String[] arrBrowsableUrl = getContext().getResources().getStringArray(R.array.lib_webview_arr_browsable_url);
+        if (arrBrowsableUrl != null)
+        {
+            for (String item : arrBrowsableUrl)
+            {
+                addBrowsableUrl(item);
+            }
+        }
+    }
 
     public final Context getContext()
     {
