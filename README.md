@@ -116,8 +116,8 @@ public class MainActivity extends AppCompatActivity
         <item>weixin:</item>
         <item>appay:</item>
         <item>sinaweibo:</item>
-        <item>alipayqr</item>
-        <item>mqqapi://</item>
+        <item>alipayqr:</item>
+        <item>mqqapi:</item>
     </string-array>
 
     <string-array name="lib_webview_arr_browsable_url">
