@@ -106,3 +106,24 @@ public class MainActivity extends AppCompatActivity
     };
 }
 ```
+
+## 支持覆盖的配置
+```xml
+<resources>
+
+    <string-array name="lib_webview_arr_action_view_url">
+        <item>tel:</item>
+        <item>weixin:</item>
+        <item>appay:</item>
+        <item>sinaweibo:</item>
+        <item>alipayqr</item>
+        <item>mqqapi://</item>
+    </string-array>
+
+    <string-array name="lib_webview_arr_browsable_url">
+        <item>intent://platformapi/startapp</item>
+        <item>intent://dl/business</item>
+    </string-array>
+
+</resources>
+```
