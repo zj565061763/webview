@@ -18,10 +18,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
 {
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String URL = "http://www.baidu.com";
 
     private FWebView mWebView;
     private TextView mTvTitle;
-    private String mUrl = "http://www.baidu.com";
 
     private FWebViewClient mWebViewClient;
     private FWebChromeClient mWebChromeClient;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity
 
         mWebView.setWebViewClient(getWebViewClient());     //设置WebViewClient
         mWebView.setWebChromeClient(getWebChromeClient()); //设置WebChromeClient
-        mWebView.get(mUrl); //请求某个地址
+        mWebView.get(URL); //请求某个地址
     }
 
     public FWebViewClient getWebViewClient()
