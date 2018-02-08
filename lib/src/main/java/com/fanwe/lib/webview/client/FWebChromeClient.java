@@ -84,19 +84,23 @@ public class FWebChromeClient extends WebChromeClient
     public void setProgressBar(ProgressBar progressBar)
     {
         mProgressBar = progressBar;
+        if (progressBar != null)
+        {
+            progressBar.setMax(100);
+        }
     }
 
     private void changeProgressBarIfNeed(int progress)
     {
         if (mProgressBar != null)
         {
+            mProgressBar.setProgress(progress);
             if (progress == 100)
             {
                 mProgressBar.setVisibility(View.GONE);
             } else
             {
                 mProgressBar.setVisibility(View.VISIBLE);
-                mProgressBar.setProgress(progress);
             }
         }
     }
