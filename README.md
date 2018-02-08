@@ -10,6 +10,7 @@ public class MainActivity extends AppCompatActivity
 
     private FWebView mWebView;
     private TextView mTvTitle;
+    private ProgressBar mProgressBar;
 
     private FWebViewClient mWebViewClient;
     private FWebChromeClient mWebChromeClient;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         mWebView = findViewById(R.id.webview);
         mTvTitle = findViewById(R.id.tv_title);
+        mProgressBar = findViewById(R.id.pb_progress);
 
         mWebView.setWebViewClient(getWebViewClient());     //设置WebViewClient
         mWebView.setWebChromeClient(getWebChromeClient()); //设置WebChromeClient
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity
                     mTvTitle.setText(title); //设置标题
                 }
             };
+            mWebChromeClient.setProgressBar(mProgressBar); //设置ProgressBar进度条
         }
         return mWebChromeClient;
     }
