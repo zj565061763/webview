@@ -30,7 +30,7 @@ public class FWebViewCookie
         return CookieManager.getInstance().getCookie(url);
     }
 
-    public static List<HttpCookie> getHttpCookie(String url)
+    public static List<HttpCookie> getCookieAsList(String url)
     {
         String cookie = getCookie(url);
         if (TextUtils.isEmpty(cookie))

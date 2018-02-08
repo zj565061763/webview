@@ -1,5 +1,6 @@
 package com.fanwe.lib.webview;
 
+import android.text.TextUtils;
 import android.webkit.WebView;
 
 import com.fanwe.lib.webview.cookie.FWebViewCookie;
@@ -61,7 +62,27 @@ public class FWebViewManager
      */
     public void synchronizeHttpCookieToWebView(String url)
     {
-        List<HttpCookie> listHttpCookie = getWebViewHandler().getHttpCookieForWebViewUrl(url);
+        if (TextUtils.isEmpty(url))
+        {
+            return;
+        }
+        List<HttpCookie> listHttpCookie = getWebViewHandler().getHttpCookieForUrl(url);
         FWebViewCookie.setCookie(url, listHttpCookie);
+    }
+
+    /**
+     * 同步url对应的webview的cookie到http
+     *
+     * @param url
+     */
+    public void synchronizeWebViewCookieToHttp(String url)
+    {
+        if (TextUtils.isEmpty(url))
+        {
+            return;
+        }
+        String cookie = FWebViewCookie.getCookie(url);
+        List<HttpCookie> listCookie = FWebViewCookie.getCookieAsList(url);
+        getWebViewHandler().synchronizeWebViewCookieToHttp(cookie, listCookie, url);
     }
 }

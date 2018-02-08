@@ -31,10 +31,16 @@ public class App extends Application
             }
 
             @Override
-            public List<HttpCookie> getHttpCookieForWebViewUrl(String url)
+            public List<HttpCookie> getHttpCookieForUrl(String url)
             {
-                Log.i(TAG, "getHttpCookieForWebViewUrl:" + url);
+                Log.i(TAG, "getHttpCookieForUrl:" + url);
                 return null;
+            }
+
+            @Override
+            public void synchronizeWebViewCookieToHttp(String cookie, List<HttpCookie> listCookie, String url)
+            {
+                Log.i(TAG, "synchronizeWebViewCookieToHttp:" + cookie);
             }
         });
     }

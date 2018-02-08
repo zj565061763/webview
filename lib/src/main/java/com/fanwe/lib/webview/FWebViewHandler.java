@@ -18,9 +18,14 @@ public interface FWebViewHandler
         }
 
         @Override
-        public List<HttpCookie> getHttpCookieForWebViewUrl(String url)
+        public List<HttpCookie> getHttpCookieForUrl(String url)
         {
             return null;
+        }
+
+        @Override
+        public void synchronizeWebViewCookieToHttp(String cookie, List<HttpCookie> listCookie, String url)
+        {
         }
     };
 
@@ -37,5 +42,14 @@ public interface FWebViewHandler
      * @param url
      * @return
      */
-    List<HttpCookie> getHttpCookieForWebViewUrl(String url);
+    List<HttpCookie> getHttpCookieForUrl(String url);
+
+    /**
+     * 同步url对应的webview的cookie到http
+     *
+     * @param cookie
+     * @param listCookie
+     * @param url
+     */
+    void synchronizeWebViewCookieToHttp(String cookie, List<HttpCookie> listCookie, String url);
 }
