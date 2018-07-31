@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
              * 当FWebViewManager的synchronizeWebViewCookieToHttp(url)方法被触发的时候会回调此方法，
              * 可以把webview的coookie存到http框架
              */
-            Log.i(TAG, "synchronizeWebViewCookieToHttp:" + cookie);
+            Log.i(TAG, "synchronizeWebViewCookieToHttp:" + url + " " + cookie);
         }
     };
 }
