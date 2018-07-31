@@ -17,7 +17,6 @@ import com.fanwe.lib.webview.client.FWebViewClient;
 import com.fanwe.lib.webview.cookie.FWebViewCookie;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Map;
 
 public class FWebView extends WebView
@@ -34,7 +33,7 @@ public class FWebView extends WebView
         init();
     }
 
-    private static final String WEBVIEW_CACHE_DIR = "/webviewcache"; // web缓存目录
+    private static final String WEBVIEW_CACHE_DIR = "webviewcache"; // web缓存目录
     private File mCacheDir;
 
     protected void init()
@@ -51,8 +50,8 @@ public class FWebView extends WebView
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength)
             {
-                Uri uri = Uri.parse(url);
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                final Uri uri = Uri.parse(url);
+                final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 getContext().startActivity(intent);
             }
         });
@@ -124,10 +123,10 @@ public class FWebView extends WebView
      */
     public void loadHtml(String htmlContent)
     {
-        if (htmlContent != null)
-        {
-            loadDataWithBaseURL("about:blank", htmlContent, "text/html", "utf-8", null);
-        }
+        if (htmlContent == null)
+            htmlContent = "";
+
+        loadDataWithBaseURL("about:blank", htmlContent, "text/html", "utf-8", null);
     }
 
     // get
@@ -248,15 +247,11 @@ public class FWebView extends WebView
         } else
         {
             if (!baseUrl.endsWith("&"))
-            {
                 sb.append("&");
-            }
         }
 
-        Iterator<Map.Entry<String, String>> it = params.entrySet().iterator();
-        while (it.hasNext())
+        for (Map.Entry<String, String> item : params.entrySet())
         {
-            Map.Entry<String, String> item = it.next();
             sb.append(item.getKey()).append("=").append(item.getValue());
             sb.append('&');
         }

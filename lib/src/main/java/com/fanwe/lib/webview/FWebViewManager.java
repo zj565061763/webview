@@ -61,7 +61,7 @@ public class FWebViewManager
         if (TextUtils.isEmpty(url))
             return;
 
-        List<HttpCookie> listHttpCookie = getWebViewHandler().getHttpCookieForUrl(url);
+        final List<HttpCookie> listHttpCookie = getWebViewHandler().getHttpCookieForUrl(url);
         FWebViewCookie.setCookie(url, listHttpCookie);
     }
 
@@ -73,11 +73,10 @@ public class FWebViewManager
     public void synchronizeWebViewCookieToHttp(String url)
     {
         if (TextUtils.isEmpty(url))
-        {
             return;
-        }
-        String cookie = FWebViewCookie.getCookie(url);
-        List<HttpCookie> listCookie = FWebViewCookie.getCookieAsList(url);
+
+        final String cookie = FWebViewCookie.getCookie(url);
+        final List<HttpCookie> listCookie = FWebViewCookie.getCookieAsList(url);
         getWebViewHandler().synchronizeWebViewCookieToHttp(cookie, listCookie, url);
     }
 }
