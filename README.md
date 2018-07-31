@@ -1,7 +1,7 @@
-## Gradle
+# Gradle
 [![](https://jitpack.io/v/zj565061763/webview.svg)](https://jitpack.io/#zj565061763/webview)
 
-## 使用
+# 使用
 ```java
 public class MainActivity extends AppCompatActivity
 {
@@ -39,12 +39,6 @@ public class MainActivity extends AppCompatActivity
             mWebViewClient = new FWebViewClient(this)
             {
                 @Override
-                public boolean shouldOverrideUrlLoading(WebView view, String url)
-                {
-                    return super.shouldOverrideUrlLoading(view, url);
-                }
-
-                @Override
                 public void onPageFinished(WebView view, String url)
                 {
                     super.onPageFinished(view, url);
@@ -76,7 +70,7 @@ public class MainActivity extends AppCompatActivity
         return mWebChromeClient;
     }
 
-    private FWebViewHandler mWebViewHandler = new FWebViewHandler()
+    private final FWebViewHandler mWebViewHandler = new FWebViewHandler()
     {
         @Override
         public void onInitWebView(WebView webView)
@@ -110,7 +104,7 @@ public class MainActivity extends AppCompatActivity
 }
 ```
 
-## 支持覆盖的配置
+# 支持覆盖的配置
 ```xml
 <resources>
 
