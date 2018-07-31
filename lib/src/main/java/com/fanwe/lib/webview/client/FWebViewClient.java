@@ -24,7 +24,7 @@ public class FWebViewClient extends WebViewClient
 
     public FWebViewClient(Context context)
     {
-        mContext = context.getApplicationContext();
+        mContext = context;
         initActionViewUrl();
         initBrowsableUrl();
     }

@@ -17,7 +17,7 @@ public class FWebChromeClient extends WebChromeClient
 {
     public static final int REQUEST_GET_CONTENT = 100;
 
-    private Context mContext;
+    private final Context mContext;
     private ProgressBar mProgressBar;
     private ValueCallback<Uri> mContentValueCallback;
 
