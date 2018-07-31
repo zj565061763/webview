@@ -17,14 +17,14 @@ import java.util.List;
  */
 public class FWebViewClient extends WebViewClient
 {
-    private Context mContext;
+    private final Context mContext;
 
-    private List<String> mListActionViewUrl = new ArrayList<>();
-    private List<String> mListBrowsableUrl = new ArrayList<>();
+    private final List<String> mListActionViewUrl = new ArrayList<>();
+    private final List<String> mListBrowsableUrl = new ArrayList<>();
 
     public FWebViewClient(Context context)
     {
-        mContext = context;
+        mContext = context.getApplicationContext();
         initActionViewUrl();
         initBrowsableUrl();
     }
@@ -35,9 +35,8 @@ public class FWebViewClient extends WebViewClient
     public boolean shouldOverrideUrlLoading(WebView view, String url)
     {
         if (interceptActionViewUrl(url) || interceptBrowsableUrl(url))
-        {
             return true;
-        }
+
         view.loadUrl(url);
         return true;
     }
@@ -76,25 +75,23 @@ public class FWebViewClient extends WebViewClient
     public final void addActionViewUrl(String url)
     {
         if (TextUtils.isEmpty(url))
-        {
             return;
-        }
-        if (!mListActionViewUrl.contains(url))
-        {
-            mListActionViewUrl.add(url);
-        }
+
+        if (mListActionViewUrl.contains(url))
+            return;
+
+        mListActionViewUrl.add(url);
     }
 
     public final void addBrowsableUrl(String url)
     {
         if (TextUtils.isEmpty(url))
-        {
             return;
-        }
-        if (!mListBrowsableUrl.contains(url))
-        {
-            mListBrowsableUrl.add(url);
-        }
+
+        if (mListBrowsableUrl.contains(url))
+            return;
+
+        mListBrowsableUrl.add(url);
     }
 
     private boolean interceptActionViewUrl(String url)
