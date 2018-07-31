@@ -28,9 +28,7 @@ public class FWebViewManager
             synchronized (FWebViewManager.class)
             {
                 if (sInstance == null)
-                {
                     sInstance = new FWebViewManager();
-                }
             }
         }
         return sInstance;
@@ -44,9 +42,7 @@ public class FWebViewManager
     private FWebViewHandler getWebViewHandler()
     {
         if (mWebViewHandler == null)
-        {
             mWebViewHandler = FWebViewHandler.DEFAULT;
-        }
         return mWebViewHandler;
     }
 
@@ -63,9 +59,8 @@ public class FWebViewManager
     public void synchronizeHttpCookieToWebView(String url)
     {
         if (TextUtils.isEmpty(url))
-        {
             return;
-        }
+
         List<HttpCookie> listHttpCookie = getWebViewHandler().getHttpCookieForUrl(url);
         FWebViewCookie.setCookie(url, listHttpCookie);
     }

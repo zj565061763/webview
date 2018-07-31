@@ -144,9 +144,7 @@ public class FWebView extends WebView
     public void get(String url, Map<String, String> params, Map<String, String> headers)
     {
         if (TextUtils.isEmpty(url))
-        {
             return;
-        }
 
         FWebViewManager.getInstance().synchronizeHttpCookieToWebView(url);
 
@@ -169,18 +167,15 @@ public class FWebView extends WebView
     public void post(String url, Map<String, String> params)
     {
         if (TextUtils.isEmpty(url))
-        {
             return;
-        }
 
         FWebViewManager.getInstance().synchronizeHttpCookieToWebView(url);
 
         byte[] postData = null;
-        String postString = buildPostString(params);
+        final String postString = buildPostString(params);
         if (!TextUtils.isEmpty(postString))
-        {
             postData = Base64.encode(postString.getBytes(), Base64.DEFAULT);
-        }
+
         postUrl(url, postData);
     }
 
@@ -203,9 +198,8 @@ public class FWebView extends WebView
     public void loadJsFunction(String js)
     {
         if (TextUtils.isEmpty(js))
-        {
             return;
-        }
+
         if (Build.VERSION.SDK_INT >= 19)
         {
             evaluateJavascript(js, new ValueCallback<String>()
@@ -229,13 +223,11 @@ public class FWebView extends WebView
     public File getCacheDir()
     {
         if (mCacheDir == null)
-        {
             mCacheDir = new File(getContext().getCacheDir(), WEBVIEW_CACHE_DIR);
-            if (!mCacheDir.exists())
-            {
-                mCacheDir.mkdirs();
-            }
-        }
+
+        if (!mCacheDir.exists())
+            mCacheDir.mkdirs();
+
         return mCacheDir;
     }
 
@@ -249,7 +241,7 @@ public class FWebView extends WebView
             return baseUrl;
         }
 
-        StringBuilder sb = new StringBuilder(baseUrl);
+        final StringBuilder sb = new StringBuilder(baseUrl);
         if (!baseUrl.contains("?"))
         {
             sb.append("?");
@@ -275,15 +267,11 @@ public class FWebView extends WebView
     private static String buildPostString(Map<String, String> params)
     {
         if (params == null || params.isEmpty())
-        {
             return null;
-        }
 
-        StringBuilder sb = new StringBuilder();
-        Iterator<Map.Entry<String, String>> it = params.entrySet().iterator();
-        while (it.hasNext())
+        final StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> item : params.entrySet())
         {
-            Map.Entry<String, String> item = it.next();
             sb.append(item.getKey()).append("=").append(item.getValue());
             sb.append('&');
         }
@@ -294,11 +282,9 @@ public class FWebView extends WebView
     private static String buildJsFunctionString(String function, Object... params)
     {
         if (TextUtils.isEmpty(function))
-        {
             return "";
-        }
 
-        StringBuilder sb = new StringBuilder(function);
+        final StringBuilder sb = new StringBuilder(function);
         sb.append("(");
         if (params != null && params.length > 0)
         {
