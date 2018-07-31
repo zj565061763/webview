@@ -1,5 +1,6 @@
 package com.fanwe.lib.webview.client;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -24,6 +25,9 @@ public class FWebViewClient extends WebViewClient
 
     public FWebViewClient(Context context)
     {
+        if (!(context instanceof Activity))
+            throw new IllegalArgumentException("context must be instance of " + Activity.class);
+
         mContext = context;
         initActionViewUrl();
         initBrowsableUrl();

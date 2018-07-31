@@ -23,6 +23,9 @@ public class FWebChromeClient extends WebChromeClient
 
     public FWebChromeClient(Context context)
     {
+        if (!(context instanceof Activity))
+            throw new IllegalArgumentException("context must be instance of " + Activity.class);
+
         mContext = context;
     }
 
@@ -37,7 +40,7 @@ public class FWebChromeClient extends WebChromeClient
 
     public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String capture)
     {
-        Context context = getContext();
+        final Context context = getContext();
         if (context instanceof Activity)
         {
             Activity activity = (Activity) context;
@@ -59,25 +62,25 @@ public class FWebChromeClient extends WebChromeClient
 
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (resultCode == Activity.RESULT_OK)
-        {
-            switch (requestCode)
-            {
-                case REQUEST_GET_CONTENT:
-                    if (data != null)
-                    {
-                        Uri value = data.getData();
-                        if (value != null)
-                        {
-                            mContentValueCallback.onReceiveValue(value);
-                            mContentValueCallback = null;
-                        }
-                    }
-                    break;
+        if (resultCode != Activity.RESULT_OK)
+            return;
 
-                default:
-                    break;
-            }
+        switch (requestCode)
+        {
+            case REQUEST_GET_CONTENT:
+                if (data != null)
+                {
+                    final Uri value = data.getData();
+                    if (value != null)
+                    {
+                        mContentValueCallback.onReceiveValue(value);
+                        mContentValueCallback = null;
+                    }
+                }
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -85,23 +88,21 @@ public class FWebChromeClient extends WebChromeClient
     {
         mProgressBar = progressBar;
         if (progressBar != null)
-        {
             progressBar.setMax(100);
-        }
     }
 
     private void changeProgressBarIfNeed(int progress)
     {
-        if (mProgressBar != null)
+        if (mProgressBar == null)
+            return;
+
+        mProgressBar.setProgress(progress);
+        if (progress == 100)
         {
-            mProgressBar.setProgress(progress);
-            if (progress == 100)
-            {
-                mProgressBar.setVisibility(View.GONE);
-            } else
-            {
-                mProgressBar.setVisibility(View.VISIBLE);
-            }
+            mProgressBar.setVisibility(View.GONE);
+        } else
+        {
+            mProgressBar.setVisibility(View.VISIBLE);
         }
     }
 }
