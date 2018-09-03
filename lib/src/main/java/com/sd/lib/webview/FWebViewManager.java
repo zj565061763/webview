@@ -1,16 +1,13 @@
-package com.fanwe.lib.webview;
+package com.sd.lib.webview;
 
 import android.text.TextUtils;
 import android.webkit.WebView;
 
-import com.fanwe.lib.webview.cookie.FWebViewCookie;
+import com.sd.lib.webview.cookie.FWebViewCookie;
 
 import java.net.HttpCookie;
 import java.util.List;
 
-/**
- * Created by zhengjun on 2018/2/7.
- */
 public class FWebViewManager
 {
     private static FWebViewManager sInstance;

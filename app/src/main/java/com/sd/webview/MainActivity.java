@@ -1,4 +1,4 @@
-package com.fanwe.webview;
+package com.sd.webview;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,11 +7,11 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.fanwe.lib.webview.FWebView;
-import com.fanwe.lib.webview.FWebViewHandler;
-import com.fanwe.lib.webview.FWebViewManager;
-import com.fanwe.lib.webview.client.FWebChromeClient;
-import com.fanwe.lib.webview.client.FWebViewClient;
+import com.sd.lib.webview.FWebView;
+import com.sd.lib.webview.FWebViewHandler;
+import com.sd.lib.webview.FWebViewManager;
+import com.sd.lib.webview.client.FWebChromeClient;
+import com.sd.lib.webview.client.FWebViewClient;
 
 import java.net.HttpCookie;
 import java.util.List;

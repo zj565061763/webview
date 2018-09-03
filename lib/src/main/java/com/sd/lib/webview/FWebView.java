@@ -1,4 +1,4 @@
-package com.fanwe.lib.webview;
+package com.sd.lib.webview;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,9 +12,9 @@ import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
-import com.fanwe.lib.webview.client.FWebChromeClient;
-import com.fanwe.lib.webview.client.FWebViewClient;
-import com.fanwe.lib.webview.cookie.FWebViewCookie;
+import com.sd.lib.webview.client.FWebChromeClient;
+import com.sd.lib.webview.client.FWebViewClient;
+import com.sd.lib.webview.cookie.FWebViewCookie;
 
 import java.io.File;
 import java.util.Map;

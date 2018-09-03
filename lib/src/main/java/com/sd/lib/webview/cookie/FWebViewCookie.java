@@ -1,4 +1,4 @@
-package com.fanwe.lib.webview.cookie;
+package com.sd.lib.webview.cookie;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -8,7 +8,6 @@ import android.webkit.CookieSyncManager;
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * webview的cookie管理

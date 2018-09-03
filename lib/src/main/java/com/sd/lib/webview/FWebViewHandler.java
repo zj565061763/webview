@@ -1,13 +1,10 @@
-package com.fanwe.lib.webview;
+package com.sd.lib.webview;
 
 import android.webkit.WebView;
 
 import java.net.HttpCookie;
 import java.util.List;
 
-/**
- * Created by zhengjun on 2018/2/7.
- */
 public interface FWebViewHandler
 {
     FWebViewHandler DEFAULT = new FWebViewHandler()

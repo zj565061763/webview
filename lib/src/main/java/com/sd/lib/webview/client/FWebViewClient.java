@@ -1,4 +1,4 @@
-package com.fanwe.lib.webview.client;
+package com.sd.lib.webview.client;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,14 +8,11 @@ import android.text.TextUtils;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.fanwe.lib.webview.R;
+import com.sd.lib.webview.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by zhengjun on 2018/2/7.
- */
 public class FWebViewClient extends WebViewClient
 {
     private final Context mContext;
