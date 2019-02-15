@@ -43,7 +43,7 @@ public class FWebViewManager
         return mWebViewHandler;
     }
 
-    public void notifyWebViewInit(WebView webView)
+    public void notifyInitWebView(WebView webView)
     {
         getWebViewHandler().onInitWebView(webView);
     }

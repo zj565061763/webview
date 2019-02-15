@@ -56,7 +56,7 @@ public class FWebView extends WebView
             }
         });
 
-        FWebViewManager.getInstance().notifyWebViewInit(this);
+        FWebViewManager.getInstance().notifyInitWebView(this);
         requestFocus();
     }
 
