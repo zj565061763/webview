@@ -33,6 +33,12 @@ public class FWebView extends WebView
         init();
     }
 
+    public FWebView(Context context, AttributeSet attrs, int defStyleAttr)
+    {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
     private static final String WEBVIEW_CACHE_DIR = "webviewcache"; // web缓存目录
     private File mCacheDir;
 
