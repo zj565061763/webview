@@ -28,8 +28,8 @@ public class FWebViewClient extends WebViewClient
             throw new IllegalArgumentException("context must be instance of " + Activity.class);
 
         mContext = context;
-        initActionViewUrl();
-        initBrowsableUrl();
+        initUrlActionView();
+        initUrlBrowsable();
     }
 
     public final Context getContext()
@@ -62,7 +62,7 @@ public class FWebViewClient extends WebViewClient
 
     //---------- Override end ----------
 
-    private void initActionViewUrl()
+    private void initUrlActionView()
     {
         final String[] array = getContext().getResources().getStringArray(R.array.lib_webview_arr_action_view_url);
         if (array != null)
@@ -74,7 +74,7 @@ public class FWebViewClient extends WebViewClient
         }
     }
 
-    private void initBrowsableUrl()
+    private void initUrlBrowsable()
     {
         final String[] array = getContext().getResources().getStringArray(R.array.lib_webview_arr_browsable_url);
         if (array != null)
@@ -106,6 +106,16 @@ public class FWebViewClient extends WebViewClient
             return;
 
         mListUrlBrowsable.add(url);
+    }
+
+    public final void clearUrlActionView()
+    {
+        mListUrlActionView.clear();
+    }
+
+    public final void clearUrlBrowsable()
+    {
+        mListUrlBrowsable.clear();
     }
 
     private boolean interceptUrlActionView(String url)
