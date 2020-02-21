@@ -138,7 +138,8 @@ public class FWebViewClient extends WebViewClient
     {
         try
         {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
+            final Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));
             getContext().startActivity(intent);
         } catch (Exception e)
@@ -151,7 +152,7 @@ public class FWebViewClient extends WebViewClient
     {
         try
         {
-            Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+            final Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
             intent.addCategory(Intent.CATEGORY_BROWSABLE);
             intent.setComponent(null);
             getContext().startActivity(intent);
