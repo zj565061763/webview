@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.text.TextUtils;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -35,11 +37,22 @@ public class FWebViewClient extends WebViewClient
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url)
     {
+        if (url.startsWith("http:") || url.startsWith("https:"))
+        {
+            view.loadUrl(url);
+            return true;
+        }
+
         if (interceptActionViewUrl(url) || interceptBrowsableUrl(url))
             return true;
 
-        view.loadUrl(url);
         return true;
+    }
+
+    @Override
+    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error)
+    {
+        handler.proceed();
     }
 
     //---------- Override end ----------
