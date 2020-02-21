@@ -51,7 +51,7 @@ public class FWebViewClient extends WebViewClient
         if (interceptUrlActionView(url) || interceptUrlBrowsable(url))
             return true;
 
-        return true;
+        return false;
     }
 
     @Override
@@ -118,7 +118,7 @@ public class FWebViewClient extends WebViewClient
         mListUrlBrowsable.clear();
     }
 
-    private boolean interceptUrlActionView(String url)
+    protected boolean interceptUrlActionView(String url)
     {
         for (String item : mListUrlActionView)
         {
@@ -131,7 +131,7 @@ public class FWebViewClient extends WebViewClient
         return false;
     }
 
-    private boolean interceptUrlBrowsable(String url)
+    protected boolean interceptUrlBrowsable(String url)
     {
         for (String item : mListUrlBrowsable)
         {
