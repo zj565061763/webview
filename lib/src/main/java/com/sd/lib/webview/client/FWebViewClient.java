@@ -12,15 +12,15 @@ import android.webkit.WebViewClient;
 
 import com.sd.lib.webview.R;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FWebViewClient extends WebViewClient
 {
     private final Context mContext;
 
-    private final List<String> mListActionViewUrl = new ArrayList<>();
-    private final List<String> mListBrowsableUrl = new ArrayList<>();
+    private final List<String> mListUrlActionView = new CopyOnWriteArrayList<>();
+    private final List<String> mListUrlBrowsable = new CopyOnWriteArrayList<>();
 
     public FWebViewClient(Context context)
     {
@@ -30,6 +30,11 @@ public class FWebViewClient extends WebViewClient
         mContext = context;
         initActionViewUrl();
         initBrowsableUrl();
+    }
+
+    public final Context getContext()
+    {
+        return mContext;
     }
 
     //---------- Override start ----------
@@ -43,7 +48,7 @@ public class FWebViewClient extends WebViewClient
             return true;
         }
 
-        if (interceptActionViewUrl(url) || interceptBrowsableUrl(url))
+        if (interceptUrlActionView(url) || interceptUrlBrowsable(url))
             return true;
 
         return true;
@@ -59,58 +64,53 @@ public class FWebViewClient extends WebViewClient
 
     private void initActionViewUrl()
     {
-        final String[] arrActionViewUrl = getContext().getResources().getStringArray(R.array.lib_webview_arr_action_view_url);
-        if (arrActionViewUrl != null)
+        final String[] array = getContext().getResources().getStringArray(R.array.lib_webview_arr_action_view_url);
+        if (array != null)
         {
-            for (String item : arrActionViewUrl)
+            for (String item : array)
             {
-                addActionViewUrl(item);
+                addUrlActionView(item);
             }
         }
     }
 
     private void initBrowsableUrl()
     {
-        final String[] arrBrowsableUrl = getContext().getResources().getStringArray(R.array.lib_webview_arr_browsable_url);
-        if (arrBrowsableUrl != null)
+        final String[] array = getContext().getResources().getStringArray(R.array.lib_webview_arr_browsable_url);
+        if (array != null)
         {
-            for (String item : arrBrowsableUrl)
+            for (String item : array)
             {
-                addBrowsableUrl(item);
+                addUrlBrowsable(item);
             }
         }
     }
 
-    public final Context getContext()
-    {
-        return mContext;
-    }
-
-    public final void addActionViewUrl(String url)
+    public final void addUrlActionView(String url)
     {
         if (TextUtils.isEmpty(url))
             return;
 
-        if (mListActionViewUrl.contains(url))
+        if (mListUrlActionView.contains(url))
             return;
 
-        mListActionViewUrl.add(url);
+        mListUrlActionView.add(url);
     }
 
-    public final void addBrowsableUrl(String url)
+    public final void addUrlBrowsable(String url)
     {
         if (TextUtils.isEmpty(url))
             return;
 
-        if (mListBrowsableUrl.contains(url))
+        if (mListUrlBrowsable.contains(url))
             return;
 
-        mListBrowsableUrl.add(url);
+        mListUrlBrowsable.add(url);
     }
 
-    private boolean interceptActionViewUrl(String url)
+    private boolean interceptUrlActionView(String url)
     {
-        for (String item : mListActionViewUrl)
+        for (String item : mListUrlActionView)
         {
             if (url.startsWith(item))
             {
@@ -121,9 +121,9 @@ public class FWebViewClient extends WebViewClient
         return false;
     }
 
-    private boolean interceptBrowsableUrl(String url)
+    private boolean interceptUrlBrowsable(String url)
     {
-        for (String item : mListBrowsableUrl)
+        for (String item : mListUrlBrowsable)
         {
             if (url.startsWith(item))
             {
