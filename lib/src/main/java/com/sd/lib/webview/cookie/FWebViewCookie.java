@@ -1,6 +1,7 @@
 package com.sd.lib.webview.cookie;
 
 import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -89,13 +90,14 @@ public class FWebViewCookie
         CookieManager.getInstance().removeAllCookie();
     }
 
-    public static void startSync()
+    public static void flush(Context context)
     {
-        CookieSyncManager.getInstance().startSync();
-    }
-
-    public static void stopSync()
-    {
-        CookieSyncManager.getInstance().stopSync();
+        if (Build.VERSION.SDK_INT >= 21)
+        {
+            CookieManager.getInstance().flush();
+        } else
+        {
+            CookieSyncManager.getInstance().sync();
+        }
     }
 }
