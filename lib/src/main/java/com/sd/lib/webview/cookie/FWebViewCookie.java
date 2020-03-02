@@ -15,11 +15,6 @@ import java.util.List;
  */
 public class FWebViewCookie
 {
-    public static void init(Context context)
-    {
-        CookieSyncManager.createInstance(context);
-    }
-
     //---------- get ----------
 
     public static String getCookie(String url)
@@ -97,7 +92,7 @@ public class FWebViewCookie
             CookieManager.getInstance().flush();
         } else
         {
-            CookieSyncManager.getInstance().sync();
+            CookieSyncManager.createInstance(context).sync();
         }
     }
 }

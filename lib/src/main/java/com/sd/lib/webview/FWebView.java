@@ -14,7 +14,6 @@ import android.webkit.WebView;
 
 import com.sd.lib.webview.client.FWebChromeClient;
 import com.sd.lib.webview.client.FWebViewClient;
-import com.sd.lib.webview.cookie.FWebViewCookie;
 
 import java.io.File;
 import java.util.Map;
@@ -44,8 +43,6 @@ public class FWebView extends WebView
 
     protected void init()
     {
-        FWebViewCookie.init(getContext());
-
         initSettings(getSettings());
 
         setWebViewClient(new FWebViewClient(getContext()));
