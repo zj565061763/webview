@@ -3,8 +3,6 @@ package com.sd.lib.webview;
 import android.text.TextUtils;
 import android.webkit.WebView;
 
-import com.sd.lib.webview.cookie.FWebViewCookie;
-
 import java.net.HttpCookie;
 import java.util.List;
 
@@ -58,8 +56,7 @@ public class FWebViewManager
         if (TextUtils.isEmpty(url))
             return;
 
-        final List<HttpCookie> listHttpCookie = getWebViewHandler().getHttpCookieForUrl(url);
-        FWebViewCookie.setCookie(url, listHttpCookie);
+        getWebViewHandler().synchronizeHttpCookieToWebView(url);
     }
 
     /**
@@ -72,8 +69,7 @@ public class FWebViewManager
         if (TextUtils.isEmpty(url))
             return;
 
-        final String cookie = FWebViewCookie.getCookie(url);
-        final List<HttpCookie> listCookie = FWebViewCookie.getCookieAsList(url);
-        getWebViewHandler().synchronizeWebViewCookieToHttp(cookie, listCookie, url);
+        final List<HttpCookie> listCookie = getWebViewHandler().getWebViewCookieForUrl(url);
+        getWebViewHandler().synchronizeWebViewCookieToHttp(url, listCookie);
     }
 }

@@ -105,13 +105,13 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        public void synchronizeWebViewCookieToHttp(String cookie, List<HttpCookie> listCookie, String url)
+        public void synchronizeWebViewCookieToHttp(String url, List<HttpCookie> listCookie)
         {
             /**
              * 当FWebViewManager的synchronizeWebViewCookieToHttp(url)方法被触发的时候会回调此方法，
              * 可以把webview的coookie存到http框架
              */
-            Log.i(TAG, "synchronizeWebViewCookieToHttp:" + url + " " + cookie);
+            Log.i(TAG, "synchronizeWebViewCookieToHttp:" + url + " " + listCookie);
         }
     };
 }

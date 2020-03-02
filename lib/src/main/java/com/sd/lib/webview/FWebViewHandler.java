@@ -2,12 +2,14 @@ package com.sd.lib.webview;
 
 import android.webkit.WebView;
 
+import com.sd.lib.webview.cookie.FWebViewCookie;
+
 import java.net.HttpCookie;
 import java.util.List;
 
-public interface FWebViewHandler
+public abstract class FWebViewHandler
 {
-    FWebViewHandler DEFAULT = new FWebViewHandler()
+    public static final FWebViewHandler DEFAULT = new FWebViewHandler()
     {
         @Override
         public void onInitWebView(WebView webView)
@@ -21,7 +23,7 @@ public interface FWebViewHandler
         }
 
         @Override
-        public void synchronizeWebViewCookieToHttp(String cookie, List<HttpCookie> listCookie, String url)
+        public void synchronizeWebViewCookieToHttp(String url, List<HttpCookie> listCookie)
         {
         }
     };
@@ -31,7 +33,9 @@ public interface FWebViewHandler
      *
      * @param webView
      */
-    void onInitWebView(WebView webView);
+    public abstract void onInitWebView(WebView webView);
+
+    //---------- http to webview ----------
 
     /**
      * 返回url对应的http的cookie
@@ -39,14 +43,38 @@ public interface FWebViewHandler
      * @param url
      * @return
      */
-    List<HttpCookie> getHttpCookieForUrl(String url);
+    public abstract List<HttpCookie> getHttpCookieForUrl(String url);
+
+    /**
+     * 同步url对应的http的cookie到webview
+     *
+     * @param url
+     */
+    public void synchronizeHttpCookieToWebView(String url)
+    {
+        final List<HttpCookie> listHttpCookie = getHttpCookieForUrl(url);
+        FWebViewCookie.setCookie(url, listHttpCookie);
+    }
+
+    //---------- webview to http ----------
+
+    /**
+     * 返回url对应的webview的cookie
+     *
+     * @param url
+     * @return
+     */
+    public List<HttpCookie> getWebViewCookieForUrl(String url)
+    {
+        final List<HttpCookie> listCookie = FWebViewCookie.getCookieAsList(url);
+        return listCookie;
+    }
 
     /**
      * 同步url对应的webview的cookie到http
      *
-     * @param cookie
-     * @param listCookie
      * @param url
+     * @param listCookie
      */
-    void synchronizeWebViewCookieToHttp(String cookie, List<HttpCookie> listCookie, String url);
+    public abstract void synchronizeWebViewCookieToHttp(String url, List<HttpCookie> listCookie);
 }
