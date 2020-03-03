@@ -48,20 +48,22 @@ public class FWebViewCookie
 
     //---------- set ----------
 
-    public static void setCookie(String url, List<HttpCookie> listCookie)
+    public static boolean setCookie(String url, List<HttpCookie> listCookie)
     {
         if (listCookie == null || listCookie.isEmpty())
-            return;
+            return false;
 
         final URI uri = toURI(url);
         if (uri == null)
-            return;
+            return false;
 
         for (HttpCookie cookie : listCookie)
         {
             final String cookieString = cookie.getName() + "=" + cookie.getValue();
-            setCookieInternal(uri, cookieString);
+            if (!setCookieInternal(uri, cookieString))
+                return false;
         }
+        return true;
     }
 
     public static boolean setCookie(String url, HttpCookie cookie)
