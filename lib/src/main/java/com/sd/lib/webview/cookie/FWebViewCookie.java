@@ -7,6 +7,8 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
 import java.net.HttpCookie;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,26 +53,55 @@ public class FWebViewCookie
         if (listCookie == null || listCookie.isEmpty())
             return;
 
-        for (HttpCookie item : listCookie)
+        final URI uri = toURI(url);
+        if (uri == null)
+            return;
+
+        for (HttpCookie cookie : listCookie)
         {
-            setCookie(url, item);
+            final String cookieString = cookie.getName() + "=" + cookie.getValue();
+            setCookieInternal(uri, cookieString);
         }
     }
 
-    public static void setCookie(String url, HttpCookie cookie)
+    public static boolean setCookie(String url, HttpCookie cookie)
     {
         if (cookie == null)
-            return;
+            return false;
 
-        setCookie(url, cookie.getName() + "=" + cookie.getValue());
+        final String cookieString = cookie.getName() + "=" + cookie.getValue();
+        return setCookie(url, cookieString);
     }
 
-    public static void setCookie(String url, String value)
+    public static boolean setCookie(String url, String cookie)
     {
-        if (TextUtils.isEmpty(url) || TextUtils.isEmpty(value))
-            return;
+        return setCookieInternal(toURI(url), cookie);
+    }
 
-        CookieManager.getInstance().setCookie(url, value);
+    private static URI toURI(String url)
+    {
+        if (TextUtils.isEmpty(url))
+            return null;
+
+        try
+        {
+            final URI uri = new URI(url);
+            return uri;
+        } catch (URISyntaxException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static boolean setCookieInternal(URI uri, String cookie)
+    {
+        if (uri == null || TextUtils.isEmpty(cookie))
+            return false;
+
+        final String url = uri.getScheme() + "://" + uri.getHost();
+        CookieManager.getInstance().setCookie(url, cookie);
+        return true;
     }
 
     //---------- other ----------
