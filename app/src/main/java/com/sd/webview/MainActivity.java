@@ -1,6 +1,9 @@
 package com.sd.webview;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.WebView;
@@ -42,7 +45,19 @@ public class MainActivity extends AppCompatActivity
 
         mWebView.setWebViewClient(getWebViewClient());     //设置WebViewClient
         mWebView.setWebChromeClient(getWebChromeClient()); //设置WebChromeClient
-        mWebView.get(URL); //请求某个地址
+//        mWebView.get(URL); //请求某个地址
+
+        mWebView.loadHtml("<html>\n" +
+                "<body>\n" +
+                "\n" +
+                "<form>\n" +
+                "<input type=\"file\" name=\"pic\" accept=\"image/gif\" />\n" +
+                "</form>\n" +
+                "\n" +
+                "<p><b>注释：</b>出于安全方面的考虑，本例不允许用户上传文件。</p>\n" +
+                "\n" +
+                "</body>\n" +
+                "</html>");
     }
 
     public FWebViewClient getWebViewClient()
@@ -114,4 +129,11 @@ public class MainActivity extends AppCompatActivity
             Log.i(TAG, "synchronizeWebViewCookieToHttp url:" + url + " cookie:" + listCookie);
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        getWebChromeClient().onActivityResult(requestCode, resultCode, data);
+    }
 }
