@@ -91,8 +91,8 @@ public class FWebChromeClient extends WebChromeClient
                 if (mContentValueCallback != null)
                 {
                     Uri value = null;
-                    if (resultCode == Activity.RESULT_OK)
-                        value = data == null ? null : data.getData();
+                    if (resultCode == Activity.RESULT_OK && data != null)
+                        value = data.getData();
 
                     mContentValueCallback.onReceiveValue(value);
                     mContentValueCallback = null;
@@ -102,10 +102,10 @@ public class FWebChromeClient extends WebChromeClient
                 if (mValueCallback != null)
                 {
                     Uri value = null;
-                    if (resultCode == Activity.RESULT_OK)
-                        value = data == null ? null : data.getData();
+                    if (resultCode == Activity.RESULT_OK && data != null)
+                        value = data.getData();
 
-                    if (data == null)
+                    if (value == null)
                         mValueCallback.onReceiveValue(null);
                     else
                         mValueCallback.onReceiveValue(new Uri[]{value});
