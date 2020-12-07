@@ -7,6 +7,7 @@
         <item>sinaweibo:</item>
         <item>alipayqr:</item>
         <item>mqqapi:</item>
+        <item>alipays:</item>
     </string-array>
 
     <string-array name="lib_webview_arr_browsable_url">
