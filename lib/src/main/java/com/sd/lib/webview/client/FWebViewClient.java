@@ -144,6 +144,10 @@ public class FWebViewClient extends WebViewClient
         return false;
     }
 
+    protected void onErrorStartActionView(String url, Exception e)
+    {
+    }
+
     private void startActionView(String url)
     {
         try
@@ -155,6 +159,7 @@ public class FWebViewClient extends WebViewClient
         } catch (Exception e)
         {
             e.printStackTrace();
+            onErrorStartActionView(url, e);
         }
     }
 
