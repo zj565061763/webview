@@ -13,10 +13,13 @@ import android.widget.ProgressBar;
 public class FWebChromeClient extends WebChromeClient
 {
     public static final int REQUEST_GET_CONTENT = 100;
+    public static final int REQUEST_GET_CONTENT_NEW = 19901;
 
     private final Context mContext;
     private ProgressBar mProgressBar;
+
     private ValueCallback<Uri> mContentValueCallback;
+    private ValueCallback<Uri[]> mValueCallback;
 
     public FWebChromeClient(Context context)
     {
@@ -50,6 +53,29 @@ public class FWebChromeClient extends WebChromeClient
         }
     }
 
+    @Override
+    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams)
+    {
+        final Context context = getContext();
+        if (context instanceof Activity)
+        {
+            final Activity activity = (Activity) context;
+            mValueCallback = filePathCallback;
+
+            final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+
+            final Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+            chooserIntent.putExtra(Intent.EXTRA_INTENT, intent);
+            chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
+
+            activity.startActivityForResult(chooserIntent, REQUEST_GET_CONTENT_NEW);
+            return true;
+        }
+        return super.onShowFileChooser(webView, filePathCallback, fileChooserParams);
+    }
+
     //---------- Override end ----------
 
     public final Context getContext()
@@ -59,23 +85,34 @@ public class FWebChromeClient extends WebChromeClient
 
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (resultCode != Activity.RESULT_OK)
-            return;
-
         switch (requestCode)
         {
             case REQUEST_GET_CONTENT:
-                if (data != null)
+                if (mContentValueCallback != null)
                 {
-                    final Uri value = data.getData();
-                    if (value != null)
-                    {
-                        mContentValueCallback.onReceiveValue(value);
-                        mContentValueCallback = null;
-                    }
+                    Uri value = null;
+                    if (resultCode == Activity.RESULT_OK && data != null)
+                        value = data.getData();
+
+                    mContentValueCallback.onReceiveValue(value);
+                    mContentValueCallback = null;
                 }
                 break;
+            case REQUEST_GET_CONTENT_NEW:
+                if (mValueCallback != null)
+                {
+                    Uri value = null;
+                    if (resultCode == Activity.RESULT_OK && data != null)
+                        value = data.getData();
 
+                    if (value == null)
+                        mValueCallback.onReceiveValue(null);
+                    else
+                        mValueCallback.onReceiveValue(new Uri[]{value});
+
+                    mValueCallback = null;
+                }
+                break;
             default:
                 break;
         }
