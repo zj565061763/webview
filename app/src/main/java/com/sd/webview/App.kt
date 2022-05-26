@@ -19,7 +19,7 @@ class App : Application() {
         }
 
         override fun getHttpCookie(url: String): List<HttpCookie>? {
-            Log.i(TAG, "getHttpCookieForUrl:$url")
+            Log.i(TAG, "getHttpCookie:$url")
             return null
         }
 
