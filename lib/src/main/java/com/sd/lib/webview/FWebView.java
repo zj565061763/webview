@@ -18,22 +18,18 @@ import com.sd.lib.webview.client.FWebViewClient;
 import java.io.File;
 import java.util.Map;
 
-public class FWebView extends WebView
-{
-    public FWebView(Context context)
-    {
+public class FWebView extends WebView {
+    public FWebView(Context context) {
         super(context);
         init();
     }
 
-    public FWebView(Context context, AttributeSet attrs)
-    {
+    public FWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public FWebView(Context context, AttributeSet attrs, int defStyleAttr)
-    {
+    public FWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -41,18 +37,15 @@ public class FWebView extends WebView
     private static final String WEBVIEW_CACHE_DIR = "webviewcache"; // web缓存目录
     private File mCacheDir;
 
-    protected void init()
-    {
+    protected void init() {
         initSettings(getSettings());
 
         setWebViewClient(new FWebViewClient(getContext()));
         setWebChromeClient(new FWebChromeClient(getContext()));
 
-        setDownloadListener(new DownloadListener()
-        {
+        setDownloadListener(new DownloadListener() {
             @Override
-            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength)
-            {
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
                 final Uri uri = Uri.parse(url);
                 final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 getContext().startActivity(intent);
@@ -63,8 +56,7 @@ public class FWebView extends WebView
         requestFocus();
     }
 
-    protected void initSettings(WebSettings settings)
-    {
+    protected void initSettings(WebSettings settings) {
         setScaleToShowAll(true);
         setSupportZoom(true);
         setDisplayZoomControls(false);
@@ -86,8 +78,9 @@ public class FWebView extends WebView
         settings.setAppCacheMaxSize(1024 * 1024 * 8);
         settings.setAppCachePath(getCacheDir().getAbsolutePath());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
     }
 
     /**
@@ -95,8 +88,7 @@ public class FWebView extends WebView
      *
      * @param isScaleToShowAll
      */
-    public final void setScaleToShowAll(boolean isScaleToShowAll)
-    {
+    public final void setScaleToShowAll(boolean isScaleToShowAll) {
         getSettings().setUseWideViewPort(isScaleToShowAll);
         getSettings().setLoadWithOverviewMode(isScaleToShowAll);
     }
@@ -106,8 +98,7 @@ public class FWebView extends WebView
      *
      * @param isSupportZoom
      */
-    public final void setSupportZoom(boolean isSupportZoom)
-    {
+    public final void setSupportZoom(boolean isSupportZoom) {
         getSettings().setSupportZoom(isSupportZoom);
         getSettings().setBuiltInZoomControls(isSupportZoom);
     }
@@ -117,8 +108,7 @@ public class FWebView extends WebView
      *
      * @param display
      */
-    public final void setDisplayZoomControls(boolean display)
-    {
+    public final void setDisplayZoomControls(boolean display) {
         getSettings().setDisplayZoomControls(display);
     }
 
@@ -127,59 +117,55 @@ public class FWebView extends WebView
      *
      * @param htmlContent
      */
-    public void loadHtml(String htmlContent)
-    {
-        if (htmlContent == null)
+    public void loadHtml(String htmlContent) {
+        if (htmlContent == null) {
             htmlContent = "";
+        }
 
         loadDataWithBaseURL("about:blank", htmlContent, "text/html", "utf-8", null);
     }
 
     // get
-    public void get(String url)
-    {
+    public void get(String url) {
         get(url, null);
     }
 
-    public void get(String url, Map<String, String> params)
-    {
+    public void get(String url, Map<String, String> params) {
         get(url, params, null);
     }
 
-    public void get(String url, Map<String, String> params, Map<String, String> headers)
-    {
-        if (TextUtils.isEmpty(url))
+    public void get(String url, Map<String, String> params, Map<String, String> headers) {
+        if (TextUtils.isEmpty(url)) {
             return;
+        }
 
         FWebViewManager.getInstance().synchronizeHttpCookieToWebView(url);
 
         url = buildGetUrl(url, params);
-        if (headers != null && !headers.isEmpty())
-        {
+        if (headers != null && !headers.isEmpty()) {
             loadUrl(url, headers);
-        } else
-        {
+        } else {
             loadUrl(url);
         }
     }
 
     // post
-    public void post(String url)
-    {
+    public void post(String url) {
         post(url, null);
     }
 
-    public void post(String url, Map<String, String> params)
-    {
-        if (TextUtils.isEmpty(url))
+    public void post(String url, Map<String, String> params) {
+        if (TextUtils.isEmpty(url)) {
             return;
+        }
 
         FWebViewManager.getInstance().synchronizeHttpCookieToWebView(url);
 
         byte[] postData = null;
         final String postString = buildPostString(params);
-        if (!TextUtils.isEmpty(postString))
+        if (!TextUtils.isEmpty(postString)) {
             postData = Base64.encode(postString.getBytes(), Base64.DEFAULT);
+        }
 
         postUrl(url, postData);
     }
@@ -190,8 +176,7 @@ public class FWebView extends WebView
      * @param function js函数名称
      * @param params   参数
      */
-    public void loadJsFunction(String function, Object... params)
-    {
+    public void loadJsFunction(String function, Object... params) {
         loadJsFunction(buildJsFunctionString(function, params));
     }
 
@@ -200,22 +185,18 @@ public class FWebView extends WebView
      *
      * @param js
      */
-    public void loadJsFunction(String js)
-    {
-        if (TextUtils.isEmpty(js))
+    public void loadJsFunction(String js) {
+        if (TextUtils.isEmpty(js)) {
             return;
+        }
 
-        if (Build.VERSION.SDK_INT >= 19)
-        {
-            evaluateJavascript(js, new ValueCallback<String>()
-            {
+        if (Build.VERSION.SDK_INT >= 19) {
+            evaluateJavascript(js, new ValueCallback<String>() {
                 @Override
-                public void onReceiveValue(String arg0)
-                {
+                public void onReceiveValue(String arg0) {
                 }
             });
-        } else
-        {
+        } else {
             loadUrl("javascript:" + js);
         }
     }
@@ -225,39 +206,36 @@ public class FWebView extends WebView
      *
      * @return
      */
-    public File getCacheDir()
-    {
-        if (mCacheDir == null)
+    public File getCacheDir() {
+        if (mCacheDir == null) {
             mCacheDir = new File(getContext().getCacheDir(), WEBVIEW_CACHE_DIR);
+        }
 
-        if (!mCacheDir.exists())
+        if (!mCacheDir.exists()) {
             mCacheDir.mkdirs();
+        }
 
         return mCacheDir;
     }
 
     //---------- utils start ----------
 
-    private static String buildGetUrl(String baseUrl, Map<String, String> params)
-    {
+    private static String buildGetUrl(String baseUrl, Map<String, String> params) {
         if (baseUrl == null || baseUrl.isEmpty() ||
-                params == null || params.isEmpty())
-        {
+                params == null || params.isEmpty()) {
             return baseUrl;
         }
 
         final StringBuilder sb = new StringBuilder(baseUrl);
-        if (!baseUrl.contains("?"))
-        {
+        if (!baseUrl.contains("?")) {
             sb.append("?");
-        } else
-        {
-            if (!baseUrl.endsWith("&"))
+        } else {
+            if (!baseUrl.endsWith("&")) {
                 sb.append("&");
+            }
         }
 
-        for (Map.Entry<String, String> item : params.entrySet())
-        {
+        for (Map.Entry<String, String> item : params.entrySet()) {
             sb.append(item.getKey()).append("=").append(item.getValue());
             sb.append('&');
         }
@@ -265,14 +243,13 @@ public class FWebView extends WebView
         return sb.toString();
     }
 
-    private static String buildPostString(Map<String, String> params)
-    {
-        if (params == null || params.isEmpty())
+    private static String buildPostString(Map<String, String> params) {
+        if (params == null || params.isEmpty()) {
             return null;
+        }
 
         final StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> item : params.entrySet())
-        {
+        for (Map.Entry<String, String> item : params.entrySet()) {
             sb.append(item.getKey()).append("=").append(item.getValue());
             sb.append('&');
         }
@@ -280,22 +257,18 @@ public class FWebView extends WebView
         return sb.toString();
     }
 
-    private static String buildJsFunctionString(String function, Object... params)
-    {
-        if (TextUtils.isEmpty(function))
+    private static String buildJsFunctionString(String function, Object... params) {
+        if (TextUtils.isEmpty(function)) {
             return "";
+        }
 
         final StringBuilder sb = new StringBuilder(function);
         sb.append("(");
-        if (params != null && params.length > 0)
-        {
-            for (Object item : params)
-            {
-                if (item instanceof String)
-                {
+        if (params != null && params.length > 0) {
+            for (Object item : params) {
+                if (item instanceof String) {
                     sb.append("'").append(String.valueOf(item)).append("'");
-                } else
-                {
+                } else {
                     sb.append(String.valueOf(item));
                 }
                 sb.append(",");

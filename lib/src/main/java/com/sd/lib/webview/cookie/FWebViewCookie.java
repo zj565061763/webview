@@ -15,31 +15,28 @@ import java.util.List;
 /**
  * webview的cookie管理
  */
-public class FWebViewCookie
-{
+public class FWebViewCookie {
     //---------- get ----------
 
-    public static String getCookie(String url)
-    {
+    public static String getCookie(String url) {
         return CookieManager.getInstance().getCookie(url);
     }
 
-    public static List<HttpCookie> getCookieAsList(String url)
-    {
+    public static List<HttpCookie> getCookieAsList(String url) {
         final String cookie = getCookie(url);
-        if (TextUtils.isEmpty(cookie))
+        if (TextUtils.isEmpty(cookie)) {
             return null;
+        }
 
         final String[] arrCookie = cookie.split(";");
-        if (arrCookie == null || arrCookie.length <= 0)
+        if (arrCookie == null || arrCookie.length <= 0) {
             return null;
+        }
 
         final List<HttpCookie> listCookie = new ArrayList<>();
-        for (String item : arrCookie)
-        {
+        for (String item : arrCookie) {
             final String[] arrPair = item.split("=");
-            if (arrPair != null && arrPair.length == 2)
-            {
+            if (arrPair != null && arrPair.length == 2) {
                 listCookie.add(new HttpCookie(arrPair[0], arrPair[1]));
             }
         }
@@ -48,58 +45,56 @@ public class FWebViewCookie
 
     //---------- set ----------
 
-    public static boolean setCookie(String url, List<HttpCookie> listCookie)
-    {
-        if (listCookie == null || listCookie.isEmpty())
+    public static boolean setCookie(String url, List<HttpCookie> listCookie) {
+        if (listCookie == null || listCookie.isEmpty()) {
             return false;
+        }
 
         final URI uri = toURI(url);
-        if (uri == null)
+        if (uri == null) {
             return false;
+        }
 
-        for (HttpCookie cookie : listCookie)
-        {
+        for (HttpCookie cookie : listCookie) {
             final String cookieString = cookie.getName() + "=" + cookie.getValue();
-            if (!setCookieInternal(uri, cookieString))
+            if (!setCookieInternal(uri, cookieString)) {
                 return false;
+            }
         }
         return true;
     }
 
-    public static boolean setCookie(String url, HttpCookie cookie)
-    {
-        if (cookie == null)
+    public static boolean setCookie(String url, HttpCookie cookie) {
+        if (cookie == null) {
             return false;
+        }
 
         final String cookieString = cookie.getName() + "=" + cookie.getValue();
         return setCookie(url, cookieString);
     }
 
-    public static boolean setCookie(String url, String cookie)
-    {
+    public static boolean setCookie(String url, String cookie) {
         return setCookieInternal(toURI(url), cookie);
     }
 
-    private static URI toURI(String url)
-    {
-        if (TextUtils.isEmpty(url))
+    private static URI toURI(String url) {
+        if (TextUtils.isEmpty(url)) {
             return null;
+        }
 
-        try
-        {
+        try {
             final URI uri = new URI(url);
             return uri;
-        } catch (URISyntaxException e)
-        {
+        } catch (URISyntaxException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private static boolean setCookieInternal(URI uri, String cookie)
-    {
-        if (uri == null || TextUtils.isEmpty(cookie))
+    private static boolean setCookieInternal(URI uri, String cookie) {
+        if (uri == null || TextUtils.isEmpty(cookie)) {
             return false;
+        }
 
         final String url = uri.getScheme() + "://" + uri.getHost();
         CookieManager.getInstance().setCookie(url, cookie);
@@ -108,23 +103,18 @@ public class FWebViewCookie
 
     //---------- other ----------
 
-    public static void removeSessionCookie()
-    {
+    public static void removeSessionCookie() {
         CookieManager.getInstance().removeSessionCookie();
     }
 
-    public static void removeAllCookie()
-    {
+    public static void removeAllCookie() {
         CookieManager.getInstance().removeAllCookie();
     }
 
-    public static void flush(Context context)
-    {
-        if (Build.VERSION.SDK_INT >= 21)
-        {
+    public static void flush(Context context) {
+        if (Build.VERSION.SDK_INT >= 21) {
             CookieManager.getInstance().flush();
-        } else
-        {
+        } else {
             CookieSyncManager.createInstance(context).sync();
         }
     }

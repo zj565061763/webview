@@ -7,24 +7,19 @@ import com.sd.lib.webview.cookie.FWebViewCookie;
 import java.net.HttpCookie;
 import java.util.List;
 
-public abstract class FWebViewHandler
-{
-    public static final FWebViewHandler DEFAULT = new FWebViewHandler()
-    {
+public abstract class FWebViewHandler {
+    public static final FWebViewHandler DEFAULT = new FWebViewHandler() {
         @Override
-        public void onInitWebView(WebView webView)
-        {
+        public void onInitWebView(WebView webView) {
         }
 
         @Override
-        public List<HttpCookie> getHttpCookieForUrl(String url)
-        {
+        public List<HttpCookie> getHttpCookieForUrl(String url) {
             return null;
         }
 
         @Override
-        public void synchronizeWebViewCookieToHttp(String url, List<HttpCookie> listCookie)
-        {
+        public void synchronizeWebViewCookieToHttp(String url, List<HttpCookie> listCookie) {
         }
     };
 
@@ -50,8 +45,7 @@ public abstract class FWebViewHandler
      *
      * @param url
      */
-    public void synchronizeHttpCookieToWebView(String url)
-    {
+    public void synchronizeHttpCookieToWebView(String url) {
         final List<HttpCookie> listHttpCookie = getHttpCookieForUrl(url);
         FWebViewCookie.setCookie(url, listHttpCookie);
     }
@@ -64,8 +58,7 @@ public abstract class FWebViewHandler
      * @param url
      * @return
      */
-    public List<HttpCookie> getWebViewCookieForUrl(String url)
-    {
+    public List<HttpCookie> getWebViewCookieForUrl(String url) {
         final List<HttpCookie> listCookie = FWebViewCookie.getCookieAsList(url);
         return listCookie;
     }

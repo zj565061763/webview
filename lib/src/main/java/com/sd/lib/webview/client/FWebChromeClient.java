@@ -10,8 +10,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
-public class FWebChromeClient extends WebChromeClient
-{
+public class FWebChromeClient extends WebChromeClient {
     public static final int REQUEST_GET_CONTENT = 100;
     public static final int REQUEST_GET_CONTENT_NEW = 19901;
 
@@ -21,10 +20,10 @@ public class FWebChromeClient extends WebChromeClient
     private ValueCallback<Uri> mContentValueCallback;
     private ValueCallback<Uri[]> mValueCallback;
 
-    public FWebChromeClient(Context context)
-    {
-        if (!(context instanceof Activity))
+    public FWebChromeClient(Context context) {
+        if (!(context instanceof Activity)) {
             throw new IllegalArgumentException("context must be instance of " + Activity.class);
+        }
 
         mContext = context;
     }
@@ -32,17 +31,14 @@ public class FWebChromeClient extends WebChromeClient
     //---------- Override start ----------
 
     @Override
-    public void onProgressChanged(WebView view, int newProgress)
-    {
+    public void onProgressChanged(WebView view, int newProgress) {
         super.onProgressChanged(view, newProgress);
         changeProgressBarIfNeed(newProgress);
     }
 
-    public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String capture)
-    {
+    public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String capture) {
         final Context context = getContext();
-        if (context instanceof Activity)
-        {
+        if (context instanceof Activity) {
             Activity activity = (Activity) context;
             mContentValueCallback = uploadFile;
 
@@ -54,11 +50,9 @@ public class FWebChromeClient extends WebChromeClient
     }
 
     @Override
-    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams)
-    {
+    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
         final Context context = getContext();
-        if (context instanceof Activity)
-        {
+        if (context instanceof Activity) {
             final Activity activity = (Activity) context;
             mValueCallback = filePathCallback;
 
@@ -78,37 +72,35 @@ public class FWebChromeClient extends WebChromeClient
 
     //---------- Override end ----------
 
-    public final Context getContext()
-    {
+    public final Context getContext() {
         return mContext;
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        switch (requestCode)
-        {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
             case REQUEST_GET_CONTENT:
-                if (mContentValueCallback != null)
-                {
+                if (mContentValueCallback != null) {
                     Uri value = null;
-                    if (resultCode == Activity.RESULT_OK && data != null)
+                    if (resultCode == Activity.RESULT_OK && data != null) {
                         value = data.getData();
+                    }
 
                     mContentValueCallback.onReceiveValue(value);
                     mContentValueCallback = null;
                 }
                 break;
             case REQUEST_GET_CONTENT_NEW:
-                if (mValueCallback != null)
-                {
+                if (mValueCallback != null) {
                     Uri value = null;
-                    if (resultCode == Activity.RESULT_OK && data != null)
+                    if (resultCode == Activity.RESULT_OK && data != null) {
                         value = data.getData();
+                    }
 
-                    if (value == null)
+                    if (value == null) {
                         mValueCallback.onReceiveValue(null);
-                    else
+                    } else {
                         mValueCallback.onReceiveValue(new Uri[]{value});
+                    }
 
                     mValueCallback = null;
                 }
@@ -118,24 +110,22 @@ public class FWebChromeClient extends WebChromeClient
         }
     }
 
-    public void setProgressBar(ProgressBar progressBar)
-    {
+    public void setProgressBar(ProgressBar progressBar) {
         mProgressBar = progressBar;
-        if (progressBar != null)
+        if (progressBar != null) {
             progressBar.setMax(100);
+        }
     }
 
-    private void changeProgressBarIfNeed(int progress)
-    {
-        if (mProgressBar == null)
+    private void changeProgressBarIfNeed(int progress) {
+        if (mProgressBar == null) {
             return;
+        }
 
         mProgressBar.setProgress(progress);
-        if (progress == 100)
-        {
+        if (progress == 100) {
             mProgressBar.setVisibility(View.GONE);
-        } else
-        {
+        } else {
             mProgressBar.setVisibility(View.VISIBLE);
         }
     }
