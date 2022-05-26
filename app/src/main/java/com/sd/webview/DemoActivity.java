@@ -2,7 +2,6 @@ package com.sd.webview;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -11,13 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sd.lib.webview.FWebView;
-import com.sd.lib.webview.FWebViewHandler;
 import com.sd.lib.webview.FWebViewManager;
 import com.sd.lib.webview.client.FWebChromeClient;
 import com.sd.lib.webview.client.FWebViewClient;
-
-import java.net.HttpCookie;
-import java.util.List;
 
 public class DemoActivity extends AppCompatActivity {
     public static final String TAG = DemoActivity.class.getSimpleName();
@@ -33,9 +28,6 @@ public class DemoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        FWebViewManager.getInstance().setWebViewHandler(mWebViewHandler); //设置WebViewHandler
-
         setContentView(R.layout.activity_demo);
         mWebView = findViewById(R.id.webview);
         mTvTitle = findViewById(R.id.tv_title);
@@ -75,34 +67,6 @@ public class DemoActivity extends AppCompatActivity {
         }
         return mWebChromeClient;
     }
-
-    private final FWebViewHandler mWebViewHandler = new FWebViewHandler() {
-        @Override
-        public void onInitWebView(WebView webView) {
-            /**
-             * 每个FWebView被创建的时候都会回调此方法，可以做一些通用的初始化
-             */
-            Log.i(TAG, "onInitWebView:" + webView);
-        }
-
-        @Override
-        public List<HttpCookie> getHttpCookieForUrl(String url) {
-            /**
-             * 当FWebView加载某个url的时候会回调此方法，可以返回http框架保存的cookie给webview
-             */
-            Log.i(TAG, "getHttpCookieForUrl:" + url);
-            return null;
-        }
-
-        @Override
-        public void synchronizeWebViewCookieToHttp(String url, List<HttpCookie> listCookie) {
-            /**
-             * 当FWebViewManager的synchronizeWebViewCookieToHttp(url)方法被触发的时候会回调此方法，
-             * 可以把webview的coookie存到http框架
-             */
-            Log.i(TAG, "synchronizeWebViewCookieToHttp url:" + url + " cookie:" + listCookie);
-        }
-    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
