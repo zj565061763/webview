@@ -1,121 +1,105 @@
-package com.sd.lib.webview.cookie;
+package com.sd.lib.webview.cookie
 
-import android.content.Context;
-import android.os.Build;
-import android.text.TextUtils;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
+import android.webkit.CookieManager
+import android.webkit.ValueCallback
+import java.net.HttpCookie
+import java.net.URI
+import java.net.URISyntaxException
 
-import java.net.HttpCookie;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * webview的cookie管理
- */
-public class FWebViewCookie {
-    //---------- get ----------
-
-    public static String getCookie(String url) {
-        return CookieManager.getInstance().getCookie(url);
+object FWebViewCookie {
+    @JvmStatic
+    fun getCookie(url: String?): String {
+        return CookieManager.getInstance().getCookie(url) ?: ""
     }
 
-    public static List<HttpCookie> getCookieAsList(String url) {
-        final String cookie = getCookie(url);
-        if (TextUtils.isEmpty(cookie)) {
-            return null;
+    @JvmStatic
+    fun getCookieAsList(url: String?): List<HttpCookie> {
+        val cookie = getCookie(url)
+        if (cookie.isEmpty()) {
+            return listOf()
         }
 
-        final String[] arrCookie = cookie.split(";");
-        if (arrCookie == null || arrCookie.length <= 0) {
-            return null;
+        val listSplit = cookie.split(";")
+        if (listSplit.isEmpty()) {
+            return listOf()
         }
 
-        final List<HttpCookie> listCookie = new ArrayList<>();
-        for (String item : arrCookie) {
-            final String[] arrPair = item.split("=");
-            if (arrPair != null && arrPair.length == 2) {
-                listCookie.add(new HttpCookie(arrPair[0], arrPair[1]));
+        val listResult = mutableListOf<HttpCookie>()
+        for (item in listSplit) {
+            val listPair = item.split("=")
+            if (listPair.size == 2) {
+                listResult.add(HttpCookie(listPair[0], listPair[1]))
             }
         }
-        return listCookie;
+        return listResult
     }
 
     //---------- set ----------
-
-    public static boolean setCookie(String url, List<HttpCookie> listCookie) {
-        if (listCookie == null || listCookie.isEmpty()) {
-            return false;
-        }
-
-        final URI uri = toURI(url);
-        if (uri == null) {
-            return false;
-        }
-
-        for (HttpCookie cookie : listCookie) {
-            final String cookieString = cookie.getName() + "=" + cookie.getValue();
+    @JvmStatic
+    fun setCookie(url: String?, listCookie: List<HttpCookie>?): Boolean {
+        if (listCookie.isNullOrEmpty()) return false
+        val uri = toURI(url) ?: return false
+        for (cookie in listCookie) {
+            val cookieString = cookie.name + "=" + cookie.value
             if (!setCookieInternal(uri, cookieString)) {
-                return false;
+                return false
             }
         }
-        return true;
+        return true
     }
 
-    public static boolean setCookie(String url, HttpCookie cookie) {
-        if (cookie == null) {
-            return false;
-        }
-
-        final String cookieString = cookie.getName() + "=" + cookie.getValue();
-        return setCookie(url, cookieString);
+    @JvmStatic
+    fun setCookie(url: String?, cookie: HttpCookie?): Boolean {
+        if (cookie == null) return false
+        return setCookie(url, cookie.name + "=" + cookie.value)
     }
 
-    public static boolean setCookie(String url, String cookie) {
-        return setCookieInternal(toURI(url), cookie);
+    @JvmStatic
+    fun setCookie(url: String?, cookie: String?): Boolean {
+        return setCookieInternal(toURI(url), cookie)
     }
 
-    private static URI toURI(String url) {
-        if (TextUtils.isEmpty(url)) {
-            return null;
-        }
-
-        try {
-            final URI uri = new URI(url);
-            return uri;
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private static boolean setCookieInternal(URI uri, String cookie) {
-        if (uri == null || TextUtils.isEmpty(cookie)) {
-            return false;
-        }
-
-        final String url = uri.getScheme() + "://" + uri.getHost();
-        CookieManager.getInstance().setCookie(url, cookie);
-        return true;
+    @JvmStatic
+    private fun setCookieInternal(uri: URI?, cookie: String?): Boolean {
+        if (uri == null || cookie.isNullOrEmpty()) return false
+        val url = uri.scheme + "://" + uri.host
+        CookieManager.getInstance().setCookie(url, cookie)
+        return true
     }
 
     //---------- other ----------
-
-    public static void removeSessionCookie() {
-        CookieManager.getInstance().removeSessionCookie();
+    /**
+     * [CookieManager.removeSessionCookies]
+     */
+    @JvmStatic
+    fun removeSessionCookies(callback: ValueCallback<Boolean>) {
+        CookieManager.getInstance().removeSessionCookies(callback)
     }
 
-    public static void removeAllCookie() {
-        CookieManager.getInstance().removeAllCookie();
+    /**
+     * [CookieManager.removeAllCookies]
+     */
+    @JvmStatic
+    fun removeAllCookie(callback: ValueCallback<Boolean>) {
+        CookieManager.getInstance().removeAllCookies(callback)
     }
 
-    public static void flush(Context context) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            CookieManager.getInstance().flush();
-        } else {
-            CookieSyncManager.createInstance(context).sync();
+    /**
+     * [CookieManager.flush]
+     */
+    @JvmStatic
+    fun flush() {
+        CookieManager.getInstance().flush()
+    }
+
+    @JvmStatic
+    private fun toURI(url: String?): URI? {
+        if (url.isNullOrEmpty()) return null
+        return try {
+            URI(url)
+        } catch (e: URISyntaxException) {
+            e.printStackTrace()
+            null
         }
     }
 }

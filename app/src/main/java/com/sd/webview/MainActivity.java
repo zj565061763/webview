@@ -2,13 +2,14 @@ package com.sd.webview;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.sd.lib.webview.FWebView;
 import com.sd.lib.webview.FWebViewHandler;
@@ -19,8 +20,7 @@ import com.sd.lib.webview.client.FWebViewClient;
 import java.net.HttpCookie;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-{
+public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String URL = "http://www.baidu.com";
 
@@ -32,8 +32,7 @@ public class MainActivity extends AppCompatActivity
     private FWebChromeClient mWebChromeClient;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         FWebViewManager.getInstance().setWebViewHandler(mWebViewHandler); //设置WebViewHandler
@@ -58,17 +57,16 @@ public class MainActivity extends AppCompatActivity
                 "\n" +
                 "</body>\n" +
                 "</html>");
+
+        final String cookie = CookieManager.getInstance().getCookie("");
+        Log.i(TAG, "cookie:" + cookie);
     }
 
-    public FWebViewClient getWebViewClient()
-    {
-        if (mWebViewClient == null)
-        {
-            mWebViewClient = new FWebViewClient(this)
-            {
+    public FWebViewClient getWebViewClient() {
+        if (mWebViewClient == null) {
+            mWebViewClient = new FWebViewClient(this) {
                 @Override
-                public void onPageFinished(WebView view, String url)
-                {
+                public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
                     /**
                      * 页面加载完成后可以把webview的cookie同步到http框架
@@ -80,15 +78,11 @@ public class MainActivity extends AppCompatActivity
         return mWebViewClient;
     }
 
-    public FWebChromeClient getWebChromeClient()
-    {
-        if (mWebChromeClient == null)
-        {
-            mWebChromeClient = new FWebChromeClient(this)
-            {
+    public FWebChromeClient getWebChromeClient() {
+        if (mWebChromeClient == null) {
+            mWebChromeClient = new FWebChromeClient(this) {
                 @Override
-                public void onReceivedTitle(WebView view, String title)
-                {
+                public void onReceivedTitle(WebView view, String title) {
                     super.onReceivedTitle(view, title);
                     mTvTitle.setText(title); //设置标题
                 }
@@ -98,11 +92,9 @@ public class MainActivity extends AppCompatActivity
         return mWebChromeClient;
     }
 
-    private final FWebViewHandler mWebViewHandler = new FWebViewHandler()
-    {
+    private final FWebViewHandler mWebViewHandler = new FWebViewHandler() {
         @Override
-        public void onInitWebView(WebView webView)
-        {
+        public void onInitWebView(WebView webView) {
             /**
              * 每个FWebView被创建的时候都会回调此方法，可以做一些通用的初始化
              */
@@ -110,8 +102,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        public List<HttpCookie> getHttpCookieForUrl(String url)
-        {
+        public List<HttpCookie> getHttpCookieForUrl(String url) {
             /**
              * 当FWebView加载某个url的时候会回调此方法，可以返回http框架保存的cookie给webview
              */
@@ -120,8 +111,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        public void synchronizeWebViewCookieToHttp(String url, List<HttpCookie> listCookie)
-        {
+        public void synchronizeWebViewCookieToHttp(String url, List<HttpCookie> listCookie) {
             /**
              * 当FWebViewManager的synchronizeWebViewCookieToHttp(url)方法被触发的时候会回调此方法，
              * 可以把webview的coookie存到http框架
@@ -131,8 +121,7 @@ public class MainActivity extends AppCompatActivity
     };
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         getWebChromeClient().onActivityResult(requestCode, resultCode, data);
     }

@@ -11,7 +11,7 @@ def libVersionName = "1.1.9"
 android {
     compileSdkVersion 32
     defaultConfig {
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 32
     }
 
