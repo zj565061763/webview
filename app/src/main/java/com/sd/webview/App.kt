@@ -14,8 +14,8 @@ class App : Application() {
     }
 
     private val _webViewHandler = object : FWebViewHandler() {
-        override fun onInitWebView(webView: WebView) {
-            Log.i(TAG, "onInitWebView:$webView")
+        override fun initWebView(webView: WebView) {
+            Log.i(TAG, "initWebView:$webView")
         }
 
         override fun getHttpCookie(url: String): List<HttpCookie>? {

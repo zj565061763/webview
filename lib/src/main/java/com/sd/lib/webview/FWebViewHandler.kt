@@ -1,23 +1,21 @@
-package com.sd.lib.webview;
+package com.sd.lib.webview
 
-import android.webkit.WebView;
+import android.webkit.WebView
+import java.net.HttpCookie
 
-import java.net.HttpCookie;
-import java.util.List;
-
-public abstract class FWebViewHandler {
+abstract class FWebViewHandler {
     /**
      * 初始化webview
      */
-    public abstract void onInitWebView(WebView webView);
+    abstract fun initWebView(webView: WebView)
 
     /**
      * 返回http的cookie
      */
-    public abstract List<HttpCookie> getHttpCookie(String url);
+    abstract fun getHttpCookie(url: String): List<HttpCookie>?
 
     /**
      * 把webview的cookie同步到http
      */
-    public abstract void synchronizeWebViewCookieToHttp(String url, List<HttpCookie> listCookie);
+    abstract fun synchronizeWebViewCookieToHttp(url: String, listCookie: List<HttpCookie>)
 }

@@ -11,7 +11,7 @@ object FWebViewManager {
     }
 
     fun initWebView(webView: WebView) {
-        _webViewHandler?.onInitWebView(webView)
+        _webViewHandler?.initWebView(webView)
     }
 
     /**
@@ -32,7 +32,9 @@ object FWebViewManager {
         if (url.isNullOrEmpty()) return
         _webViewHandler?.let { handler ->
             val listCookie = FWebViewCookie.getCookieAsList(url)
-            handler.synchronizeWebViewCookieToHttp(url, listCookie)
+            if (listCookie.isNotEmpty()) {
+                handler.synchronizeWebViewCookieToHttp(url, listCookie)
+            }
         }
     }
 }
