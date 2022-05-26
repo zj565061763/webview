@@ -1,132 +1,87 @@
-package com.sd.lib.webview.client;
+package com.sd.lib.webview.client
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.view.View;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.widget.ProgressBar;
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.view.View
+import android.webkit.ValueCallback
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.widget.ProgressBar
 
-public class FWebChromeClient extends WebChromeClient {
-    public static final int REQUEST_GET_CONTENT = 100;
-    public static final int REQUEST_GET_CONTENT_NEW = 19901;
+open class FWebChromeClient(context: Context?) : WebChromeClient() {
+    private val context: Activity
 
-    private final Context mContext;
-    private ProgressBar mProgressBar;
+    private var _progressBar: ProgressBar? = null
+    private var _valueCallback: ValueCallback<Array<Uri>>? = null
 
-    private ValueCallback<Uri> mContentValueCallback;
-    private ValueCallback<Uri[]> mValueCallback;
-
-    public FWebChromeClient(Context context) {
-        if (!(context instanceof Activity)) {
-            throw new IllegalArgumentException("context must be instance of " + Activity.class);
+    fun setProgressBar(progressBar: ProgressBar?) {
+        _progressBar = progressBar
+        if (progressBar != null) {
+            progressBar.max = 100
         }
-
-        mContext = context;
     }
 
     //---------- Override start ----------
-
-    @Override
-    public void onProgressChanged(WebView view, int newProgress) {
-        super.onProgressChanged(view, newProgress);
-        changeProgressBarIfNeed(newProgress);
-    }
-
-    public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String capture) {
-        final Context context = getContext();
-        if (context instanceof Activity) {
-            Activity activity = (Activity) context;
-            mContentValueCallback = uploadFile;
-
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
-            activity.startActivityForResult(intent, REQUEST_GET_CONTENT);
+    override fun onProgressChanged(view: WebView, newProgress: Int) {
+        super.onProgressChanged(view, newProgress)
+        _progressBar?.let { progressBar ->
+            progressBar.progress = newProgress
+            if (newProgress == 100) {
+                progressBar.visibility = View.GONE
+            } else {
+                progressBar.visibility = View.VISIBLE
+            }
         }
     }
 
-    @Override
-    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
-        final Context context = getContext();
-        if (context instanceof Activity) {
-            final Activity activity = (Activity) context;
-            mValueCallback = filePathCallback;
+    override fun onShowFileChooser(
+            webView: WebView,
+            filePathCallback: ValueCallback<Array<Uri>>,
+            fileChooserParams: FileChooserParams
+    ): Boolean {
+        _valueCallback = filePathCallback
 
-            final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
-
-            final Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
-            chooserIntent.putExtra(Intent.EXTRA_INTENT, intent);
-            chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
-
-            activity.startActivityForResult(chooserIntent, REQUEST_GET_CONTENT_NEW);
-            return true;
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            this.addCategory(Intent.CATEGORY_OPENABLE)
+            this.type = "image/*"
         }
-        return super.onShowFileChooser(webView, filePathCallback, fileChooserParams);
+        val chooserIntent = Intent(Intent.ACTION_CHOOSER).apply {
+            this.putExtra(Intent.EXTRA_INTENT, intent)
+            this.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
+        }
+        context.startActivityForResult(chooserIntent, REQUEST_CODE_GET_CONTENT)
+        return true
     }
 
-    //---------- Override end ----------
-
-    public final Context getContext() {
-        return mContext;
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_GET_CONTENT:
-                if (mContentValueCallback != null) {
-                    Uri value = null;
-                    if (resultCode == Activity.RESULT_OK && data != null) {
-                        value = data.getData();
-                    }
-
-                    mContentValueCallback.onReceiveValue(value);
-                    mContentValueCallback = null;
-                }
-                break;
-            case REQUEST_GET_CONTENT_NEW:
-                if (mValueCallback != null) {
-                    Uri value = null;
-                    if (resultCode == Activity.RESULT_OK && data != null) {
-                        value = data.getData();
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            REQUEST_CODE_GET_CONTENT -> {
+                _valueCallback?.let { callback ->
+                    var value: Uri? = null
+                    if (resultCode == Activity.RESULT_OK) {
+                        value = data?.data
                     }
 
                     if (value == null) {
-                        mValueCallback.onReceiveValue(null);
+                        callback.onReceiveValue(null)
                     } else {
-                        mValueCallback.onReceiveValue(new Uri[]{value});
+                        callback.onReceiveValue(arrayOf(value))
                     }
-
-                    mValueCallback = null;
+                    _valueCallback = null
                 }
-                break;
-            default:
-                break;
+            }
+            else -> {}
         }
     }
 
-    public void setProgressBar(ProgressBar progressBar) {
-        mProgressBar = progressBar;
-        if (progressBar != null) {
-            progressBar.setMax(100);
-        }
+    companion object {
+        const val REQUEST_CODE_GET_CONTENT = 100
     }
 
-    private void changeProgressBarIfNeed(int progress) {
-        if (mProgressBar == null) {
-            return;
-        }
-
-        mProgressBar.setProgress(progress);
-        if (progress == 100) {
-            mProgressBar.setVisibility(View.GONE);
-        } else {
-            mProgressBar.setVisibility(View.VISIBLE);
-        }
+    init {
+        require(context is Activity) { "context must be instance of " + Activity::class.java }
+        this.context = context
     }
 }
