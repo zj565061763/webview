@@ -2,26 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_title"
+    <Button
+        android:id="@+id/btn_demo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:gravity="center"
-        android:textColor="@android:color/white" />
+        android:text="Demo"
+        android:textAllCaps="false" />
 
-    <ProgressBar
-        android:id="@+id/pb_progress"
-        style="@android:style/Widget.ProgressBar.Horizontal"
+    <Button
+        android:id="@+id/btn_upload"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <com.sd.lib.webview.FWebView
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:text="Upload"
+        android:textAllCaps="false" />
 
 </LinearLayout>
