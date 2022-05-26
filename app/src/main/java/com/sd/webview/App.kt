@@ -10,7 +10,7 @@ import java.net.HttpCookie
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        FWebViewManager.getInstance().setWebViewHandler(_webViewHandler) //设置WebViewHandler
+        FWebViewManager.setWebViewHandler(_webViewHandler) //设置WebViewHandler
     }
 
     private val _webViewHandler = object : FWebViewHandler() {
@@ -18,7 +18,7 @@ class App : Application() {
             Log.i(TAG, "onInitWebView:$webView")
         }
 
-        override fun getHttpCookieForUrl(url: String): List<HttpCookie>? {
+        override fun getHttpCookie(url: String): List<HttpCookie>? {
             Log.i(TAG, "getHttpCookieForUrl:$url")
             return null
         }

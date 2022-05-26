@@ -52,7 +52,7 @@ public class FWebView extends WebView {
             }
         });
 
-        FWebViewManager.getInstance().notifyInitWebView(this);
+        FWebViewManager.INSTANCE.initWebView(this);
         requestFocus();
     }
 
@@ -139,7 +139,7 @@ public class FWebView extends WebView {
             return;
         }
 
-        FWebViewManager.getInstance().synchronizeHttpCookieToWebView(url);
+        FWebViewManager.INSTANCE.synchronizeHttpCookieToWebView(url);
 
         url = buildGetUrl(url, params);
         if (headers != null && !headers.isEmpty()) {
@@ -159,7 +159,7 @@ public class FWebView extends WebView {
             return;
         }
 
-        FWebViewManager.getInstance().synchronizeHttpCookieToWebView(url);
+        FWebViewManager.INSTANCE.synchronizeHttpCookieToWebView(url);
 
         byte[] postData = null;
         final String postString = buildPostString(params);

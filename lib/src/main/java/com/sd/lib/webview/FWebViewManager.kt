@@ -1,69 +1,38 @@
-package com.sd.lib.webview;
+package com.sd.lib.webview
 
-import android.text.TextUtils;
-import android.webkit.WebView;
+import android.webkit.WebView
+import com.sd.lib.webview.cookie.FWebViewCookie
 
-import java.net.HttpCookie;
-import java.util.List;
+object FWebViewManager {
+    private var _webViewHandler: FWebViewHandler? = null
 
-public class FWebViewManager {
-    private static FWebViewManager sInstance;
-
-    private FWebViewHandler mWebViewHandler;
-
-    private FWebViewManager() {
+    fun setWebViewHandler(webViewHandler: FWebViewHandler?) {
+        _webViewHandler = webViewHandler
     }
 
-    public static FWebViewManager getInstance() {
-        if (sInstance == null) {
-            synchronized (FWebViewManager.class) {
-                if (sInstance == null) {
-                    sInstance = new FWebViewManager();
-                }
-            }
-        }
-        return sInstance;
-    }
-
-    public void setWebViewHandler(FWebViewHandler webViewHandler) {
-        mWebViewHandler = webViewHandler;
-    }
-
-    private FWebViewHandler getWebViewHandler() {
-        if (mWebViewHandler == null) {
-            mWebViewHandler = FWebViewHandler.DEFAULT;
-        }
-        return mWebViewHandler;
-    }
-
-    public void notifyInitWebView(WebView webView) {
-        getWebViewHandler().onInitWebView(webView);
+    fun initWebView(webView: WebView) {
+        _webViewHandler?.onInitWebView(webView)
     }
 
     /**
-     * 把url对应的http的cookie同步到webview
-     *
-     * @param url
+     * 把http的cookie同步到webview
      */
-    public void synchronizeHttpCookieToWebView(String url) {
-        if (TextUtils.isEmpty(url)) {
-            return;
+    fun synchronizeHttpCookieToWebView(url: String?) {
+        if (url.isNullOrEmpty()) return
+        _webViewHandler?.let { handler ->
+            val listCookie = handler.getHttpCookie(url)
+            FWebViewCookie.setCookie(url, listCookie)
         }
-
-        getWebViewHandler().synchronizeHttpCookieToWebView(url);
     }
 
     /**
-     * 同步url对应的webview的cookie到http
-     *
-     * @param url
+     * 把webview的cookie同步到http
      */
-    public void synchronizeWebViewCookieToHttp(String url) {
-        if (TextUtils.isEmpty(url)) {
-            return;
+    fun synchronizeWebViewCookieToHttp(url: String?) {
+        if (url.isNullOrEmpty()) return
+        _webViewHandler?.let { handler ->
+            val listCookie = FWebViewCookie.getCookieAsList(url)
+            handler.synchronizeWebViewCookieToHttp(url, listCookie)
         }
-
-        final List<HttpCookie> listCookie = getWebViewHandler().getWebViewCookieForUrl(url);
-        getWebViewHandler().synchronizeWebViewCookieToHttp(url, listCookie);
     }
 }

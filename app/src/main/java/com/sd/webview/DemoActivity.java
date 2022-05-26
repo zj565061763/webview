@@ -47,7 +47,7 @@ public class DemoActivity extends AppCompatActivity {
                     /**
                      * 页面加载完成后可以把webview的cookie同步到http框架
                      */
-                    FWebViewManager.getInstance().synchronizeWebViewCookieToHttp(url);
+                    FWebViewManager.INSTANCE.synchronizeWebViewCookieToHttp(url);
                 }
             };
         }
