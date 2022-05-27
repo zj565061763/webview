@@ -3,7 +3,6 @@ package com.sd.lib.webview;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Base64;
@@ -34,7 +33,7 @@ public class FWebView extends WebView {
         init();
     }
 
-    private static final String WEBVIEW_CACHE_DIR = "webviewcache"; // web缓存目录
+    private static final String WEBVIEW_CACHE_DIR = "fwebview_cache"; // web缓存目录
     private File mCacheDir;
 
     protected void init() {
@@ -78,15 +77,11 @@ public class FWebView extends WebView {
         settings.setAppCacheMaxSize(1024 * 1024 * 8);
         settings.setAppCachePath(getCacheDir().getAbsolutePath());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        }
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
 
     /**
      * 设置是否把网页按比例缩放到刚好全部展示，默认true
-     *
-     * @param isScaleToShowAll
      */
     public final void setScaleToShowAll(boolean isScaleToShowAll) {
         getSettings().setUseWideViewPort(isScaleToShowAll);
@@ -95,8 +90,6 @@ public class FWebView extends WebView {
 
     /**
      * 设置是否支持缩放，默认true
-     *
-     * @param isSupportZoom
      */
     public final void setSupportZoom(boolean isSupportZoom) {
         getSettings().setSupportZoom(isSupportZoom);
@@ -105,8 +98,6 @@ public class FWebView extends WebView {
 
     /**
      * 设置是否显示缩放控件，默认false
-     *
-     * @param display
      */
     public final void setDisplayZoomControls(boolean display) {
         getSettings().setDisplayZoomControls(display);
@@ -114,14 +105,11 @@ public class FWebView extends WebView {
 
     /**
      * 加载html内容
-     *
-     * @param htmlContent
      */
     public void loadHtml(String htmlContent) {
         if (htmlContent == null) {
             htmlContent = "";
         }
-
         loadDataWithBaseURL("about:blank", htmlContent, "text/html", "utf-8", null);
     }
 
@@ -159,14 +147,13 @@ public class FWebView extends WebView {
             return;
         }
 
-        FWebViewManager.INSTANCE.synchronizeHttpCookieToWebView(url);
-
         byte[] postData = null;
         final String postString = buildPostString(params);
         if (!TextUtils.isEmpty(postString)) {
             postData = Base64.encode(postString.getBytes(), Base64.DEFAULT);
         }
 
+        FWebViewManager.INSTANCE.synchronizeHttpCookieToWebView(url);
         postUrl(url, postData);
     }
 
@@ -177,44 +164,43 @@ public class FWebView extends WebView {
      * @param params   参数
      */
     public void loadJsFunction(String function, Object... params) {
-        loadJsFunction(buildJsFunctionString(function, params));
+        loadJs(buildJsFunctionString(function, params));
     }
 
     /**
-     * 调用js函数
-     *
-     * @param js
+     * 加载js
      */
-    public void loadJsFunction(String js) {
+    public void loadJs(String js) {
+        loadJs(js, null);
+    }
+
+    /**
+     * 加载js
+     */
+    public void loadJs(String js, ValueCallback<String> callback) {
         if (TextUtils.isEmpty(js)) {
             return;
         }
-
-        if (Build.VERSION.SDK_INT >= 19) {
-            evaluateJavascript(js, new ValueCallback<String>() {
+        if (callback == null) {
+            callback = new ValueCallback<String>() {
                 @Override
-                public void onReceiveValue(String arg0) {
+                public void onReceiveValue(String value) {
                 }
-            });
-        } else {
-            loadUrl("javascript:" + js);
+            };
         }
+        evaluateJavascript(js, callback);
     }
 
     /**
      * 返回webview缓存目录
-     *
-     * @return
      */
     public File getCacheDir() {
         if (mCacheDir == null) {
             mCacheDir = new File(getContext().getCacheDir(), WEBVIEW_CACHE_DIR);
         }
-
         if (!mCacheDir.exists()) {
             mCacheDir.mkdirs();
         }
-
         return mCacheDir;
     }
 
@@ -267,9 +253,9 @@ public class FWebView extends WebView {
         if (params != null && params.length > 0) {
             for (Object item : params) {
                 if (item instanceof String) {
-                    sb.append("'").append(String.valueOf(item)).append("'");
+                    sb.append("'").append(item).append("'");
                 } else {
-                    sb.append(String.valueOf(item));
+                    sb.append(item);
                 }
                 sb.append(",");
             }
