@@ -1,20 +1,19 @@
 package com.sd.lib.webview.client
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.view.View
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.ProgressBar
+import androidx.activity.ComponentActivity
+import com.sd.lib.actresult.FActivityResult
 
-open class FWebChromeClient(context: Context?) : WebChromeClient() {
-    private val context: Activity
-
+open class FWebChromeClient(context: Context) : WebChromeClient() {
+    private val _activity: ComponentActivity
     private var _progressBar: ProgressBar? = null
-    private var _valueCallback: ValueCallback<Array<Uri>>? = null
+    private var _activityResult: FActivityResult? = null
 
     fun setProgressBar(progressBar: ProgressBar?) {
         _progressBar = progressBar
@@ -41,47 +40,18 @@ open class FWebChromeClient(context: Context?) : WebChromeClient() {
             filePathCallback: ValueCallback<Array<Uri>>,
             fileChooserParams: FileChooserParams
     ): Boolean {
-        _valueCallback = filePathCallback
-
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            this.addCategory(Intent.CATEGORY_OPENABLE)
-            this.type = "image/*"
+        if (_activityResult == null) {
+            _activityResult = FActivityResult(_activity)
         }
-        val chooserIntent = Intent(Intent.ACTION_CHOOSER).apply {
-            this.putExtra(Intent.EXTRA_INTENT, intent)
-            this.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
-        }
-        context.startActivityForResult(chooserIntent, REQUEST_CODE_GET_CONTENT)
+        _activityResult?.registerResult { result ->
+            val value = FileChooserParams.parseResult(result.resultCode, result.data)
+            filePathCallback.onReceiveValue(value)
+        }?.launch(fileChooserParams.createIntent())
         return true
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_CODE_GET_CONTENT -> {
-                _valueCallback?.let { callback ->
-                    var value: Uri? = null
-                    if (resultCode == Activity.RESULT_OK) {
-                        value = data?.data
-                    }
-
-                    if (value == null) {
-                        callback.onReceiveValue(null)
-                    } else {
-                        callback.onReceiveValue(arrayOf(value))
-                    }
-                    _valueCallback = null
-                }
-            }
-            else -> {}
-        }
-    }
-
-    companion object {
-        const val REQUEST_CODE_GET_CONTENT = 100
-    }
-
     init {
-        require(context is Activity) { "context must be instance of " + Activity::class.java }
-        this.context = context
+        require(context is ComponentActivity) { "activity must be instance of ${ComponentActivity::class.java}" }
+        this._activity = context
     }
 }

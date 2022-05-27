@@ -10,17 +10,15 @@ class UploadActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
-
         val html = """
             <html>
             <body>
                 <form>
-                    <input type="file" name="pic" accept="image/gif" />
+                    <input type="file" name="pic" accept="image/*" />
                 </form>
             </body>
             </html>
         """.trimIndent()
-
         _binding.webview.loadHtml(html)
     }
 }

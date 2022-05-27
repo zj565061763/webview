@@ -1,12 +1,10 @@
 package com.sd.webview;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sd.lib.webview.FWebView;
@@ -66,11 +64,5 @@ public class DemoActivity extends AppCompatActivity {
             mWebChromeClient.setProgressBar(mProgressBar); //设置ProgressBar进度条
         }
         return mWebChromeClient;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        getWebChromeClient().onActivityResult(requestCode, resultCode, data);
     }
 }
