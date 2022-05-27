@@ -8,6 +8,7 @@ import android.net.http.SslError
 import android.webkit.SslErrorHandler
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.sd.lib.webview.FWebViewManager
 import com.sd.lib.webview.R
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -23,7 +24,13 @@ open class FWebViewClient(context: Context) : WebViewClient() {
             view.loadUrl(url)
             return true
         }
+        initUrl()
         return interceptUrl(url)
+    }
+
+    override fun onPageFinished(view: WebView?, url: String?) {
+        super.onPageFinished(view, url)
+        FWebViewManager.synchronizeWebViewCookieToHttp(url)
     }
 
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
@@ -89,20 +96,26 @@ open class FWebViewClient(context: Context) : WebViewClient() {
         }
     }
 
+    private fun initUrl() {
+        if (_listActionView.isEmpty()) {
+            val actionViewArray =
+                _activity.resources.getStringArray(R.array.lib_webview_arr_action_view_url)
+            for (item in actionViewArray) {
+                addActionViewUrl(item)
+            }
+        }
+
+        if (_listBrowsable.isEmpty()) {
+            val browsableArray =
+                _activity.resources.getStringArray(R.array.lib_webview_arr_browsable_url)
+            for (item in browsableArray) {
+                addBrowsableUrl(item)
+            }
+        }
+    }
+
     init {
         require(context is Activity) { "context must be instance of " + Activity::class.java }
         this._activity = context
-
-        val actionViewArray =
-            _activity.resources.getStringArray(R.array.lib_webview_arr_action_view_url)
-        for (item in actionViewArray) {
-            addActionViewUrl(item)
-        }
-
-        val browsableArray =
-            _activity.resources.getStringArray(R.array.lib_webview_arr_browsable_url)
-        for (item in browsableArray) {
-            addBrowsableUrl(item)
-        }
     }
 }
