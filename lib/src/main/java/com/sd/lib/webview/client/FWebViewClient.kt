@@ -1,156 +1,108 @@
-package com.sd.lib.webview.client;
+package com.sd.lib.webview.client
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.net.http.SslError;
-import android.text.TextUtils;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.net.http.SslError
+import android.webkit.SslErrorHandler
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import com.sd.lib.webview.R
+import java.util.concurrent.CopyOnWriteArrayList
 
-import com.sd.lib.webview.R;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-public class FWebViewClient extends WebViewClient {
-    private final Context mContext;
-
-    private final List<String> mListUrlActionView = new CopyOnWriteArrayList<>();
-    private final List<String> mListUrlBrowsable = new CopyOnWriteArrayList<>();
-
-    public FWebViewClient(Context context) {
-        if (!(context instanceof Activity)) {
-            throw new IllegalArgumentException("context must be instance of " + Activity.class);
-        }
-
-        mContext = context;
-        initUrlActionView();
-        initUrlBrowsable();
-    }
-
-    public final Context getContext() {
-        return mContext;
-    }
+open class FWebViewClient(context: Context) : WebViewClient() {
+    private val _activity: Activity
+    private val _listActionView = CopyOnWriteArrayList<String>()
+    private val _listBrowsable = CopyOnWriteArrayList<String>()
 
     //---------- Override start ----------
 
-    @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+    override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
         if (url.startsWith("http:") || url.startsWith("https:")) {
-            view.loadUrl(url);
-            return true;
+            view.loadUrl(url)
+            return true
         }
-
-        if (interceptUrlActionView(url) || interceptUrlBrowsable(url)) {
-            return true;
-        }
-
-        return false;
+        return interceptUrl(url)
     }
 
-    @Override
-    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-        handler.proceed();
+    override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
+        handler.proceed()
     }
 
     //---------- Override end ----------
 
-    private void initUrlActionView() {
-        final String[] array = getContext().getResources().getStringArray(R.array.lib_webview_arr_action_view_url);
-        if (array != null) {
-            for (String item : array) {
-                addUrlActionView(item);
-            }
+    fun addActionViewUrl(url: String) {
+        if (url.isEmpty()) return
+        if (!_listActionView.contains(url)) {
+            _listActionView.add(url)
         }
     }
 
-    private void initUrlBrowsable() {
-        final String[] array = getContext().getResources().getStringArray(R.array.lib_webview_arr_browsable_url);
-        if (array != null) {
-            for (String item : array) {
-                addUrlBrowsable(item);
-            }
+    fun addBrowsableUrl(url: String) {
+        if (url.isEmpty()) return
+        if (!_listBrowsable.contains(url)) {
+            _listBrowsable.add(url)
         }
     }
 
-    public final void addUrlActionView(String url) {
-        if (TextUtils.isEmpty(url)) {
-            return;
-        }
-
-        if (mListUrlActionView.contains(url)) {
-            return;
-        }
-
-        mListUrlActionView.add(url);
-    }
-
-    public final void addUrlBrowsable(String url) {
-        if (TextUtils.isEmpty(url)) {
-            return;
-        }
-
-        if (mListUrlBrowsable.contains(url)) {
-            return;
-        }
-
-        mListUrlBrowsable.add(url);
-    }
-
-    public final void clearUrlActionView() {
-        mListUrlActionView.clear();
-    }
-
-    public final void clearUrlBrowsable() {
-        mListUrlBrowsable.clear();
-    }
-
-    protected boolean interceptUrlActionView(String url) {
-        for (String item : mListUrlActionView) {
+    /**
+     * 是否拦截Url
+     */
+    protected open fun interceptUrl(url: String): Boolean {
+        for (item in _listActionView) {
             if (url.startsWith(item)) {
-                startActionView(url);
-                return true;
+                startActionViewUrl(url)
+                return true
             }
         }
-        return false;
-    }
-
-    protected boolean interceptUrlBrowsable(String url) {
-        for (String item : mListUrlBrowsable) {
+        for (item in _listBrowsable) {
             if (url.startsWith(item)) {
-                startBrowsable(url);
-                return true;
+                startBrowsableUrl(url)
+                return true
             }
         }
-        return false;
+        return false
     }
 
-    protected void onErrorStartActionView(String url, Exception e) {
-    }
-
-    private void startActionView(String url) {
+    protected open fun startActionViewUrl(url: String) {
         try {
-            final Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
-            getContext().startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-            onErrorStartActionView(url, e);
+            val intent = Intent().apply {
+                this.action = Intent.ACTION_VIEW
+                this.data = Uri.parse(url)
+            }
+            _activity.startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    private void startBrowsable(String url) {
+    protected open fun startBrowsableUrl(url: String) {
         try {
-            final Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-            intent.addCategory(Intent.CATEGORY_BROWSABLE);
-            intent.setComponent(null);
-            getContext().startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
+            val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME).apply {
+                this.addCategory(Intent.CATEGORY_BROWSABLE)
+                this.component = null
+            }
+            _activity.startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    init {
+        require(context is Activity) { "context must be instance of " + Activity::class.java }
+        this._activity = context
+
+        val actionViewArray =
+            _activity.resources.getStringArray(R.array.lib_webview_arr_action_view_url)
+        for (item in actionViewArray) {
+            addActionViewUrl(item)
+        }
+
+        val browsableArray =
+            _activity.resources.getStringArray(R.array.lib_webview_arr_browsable_url)
+        for (item in browsableArray) {
+            addBrowsableUrl(item)
         }
     }
 }
